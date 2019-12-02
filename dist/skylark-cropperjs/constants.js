@@ -1,0 +1,9 @@
+/**
+ * skylark-cropperjs - A version of cropperjs that ported to running on skylarkjs.
+ * @author Hudaokeji, Inc.
+ * @version v0.9.0
+ * @link https://github.com/skylark-integration/skylark-cropperjs/
+ * @license MIT
+ */
+define(function(){"use strict";const E="undefined"!=typeof window&&void 0!==window.document,_=E?window:{},e=!!E&&"ontouchstart"in _.document.documentElement,T=!!E&&"PointerEvent"in _,o=e?"touchstart":"mousedown",O=e?"touchmove":"mousemove",N=e?"touchend touchcancel":"mouseup";return{IS_BROWSER:E,WINDOW:_,IS_TOUCH_DEVICE:e,HAS_POINTER_EVENT:T,NAMESPACE:"cropper",ACTION_ALL:"all",ACTION_CROP:"crop",ACTION_MOVE:"move",ACTION_ZOOM:"zoom",ACTION_EAST:"e",ACTION_WEST:"w",ACTION_SOUTH:"s",ACTION_NORTH:"n",ACTION_NORTH_EAST:"ne",ACTION_NORTH_WEST:"nw",ACTION_SOUTH_EAST:"se",ACTION_SOUTH_WEST:"sw",CLASS_CROP:"cropper-crop",CLASS_DISABLED:"cropper-disabled",CLASS_HIDDEN:"cropper-hidden",CLASS_HIDE:"cropper-hide",CLASS_INVISIBLE:"cropper-invisible",CLASS_MODAL:"cropper-modal",CLASS_MOVE:"cropper-move",DATA_ACTION:"cropperAction",DATA_PREVIEW:"cropperPreview",DRAG_MODE_CROP:"crop",DRAG_MODE_MOVE:"move",DRAG_MODE_NONE:"none",EVENT_CROP:"crop",EVENT_CROP_END:"cropend",EVENT_CROP_MOVE:"cropmove",EVENT_CROP_START:"cropstart",EVENT_DBLCLICK:"dblclick",EVENT_TOUCH_START:o,EVENT_TOUCH_MOVE:O,EVENT_TOUCH_END:N,EVENT_POINTER_DOWN:T?"pointerdown":o,EVENT_POINTER_MOVE:T?"pointermove":O,EVENT_POINTER_UP:T?"pointerup pointercancel":N,EVENT_READY:"ready",EVENT_RESIZE:"resize",EVENT_WHEEL:"wheel",EVENT_ZOOM:"zoom",MIME_TYPE_JPEG:"image/jpeg",REGEXP_ACTIONS:/^e|w|s|n|se|sw|ne|nw|all|crop|move|zoom$/,REGEXP_DATA_URL:/^data:/,REGEXP_DATA_URL_JPEG:/^data:image\/jpeg;base64,/,REGEXP_TAG_NAME:/^img|canvas$/i,MIN_CONTAINER_WIDTH:200,MIN_CONTAINER_HEIGHT:100}});
+//# sourceMappingURL=sourcemaps/constants.js.map

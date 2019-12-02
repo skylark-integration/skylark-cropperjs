@@ -1,0 +1,9 @@
+/**
+ * skylark-cropperjs - A version of cropperjs that ported to running on skylarkjs.
+ * @author Hudaokeji, Inc.
+ * @version v0.9.0
+ * @link https://github.com/skylark-integration/skylark-cropperjs/
+ * @license MIT
+ */
+define(["./constants","./utilities"],function(t,e){"use strict";return{initPreview(){const{element:i,crossOrigin:s}=this,{preview:a}=this.options,h=s?this.crossOriginUrl:this.url,n=i.alt||"The image to preview",r=document.createElement("img");if(s&&(r.crossOrigin=s),r.src=h,r.alt=n,this.viewBox.appendChild(r),this.viewBoxImage=r,!a)return;let o=a;"string"==typeof a?o=i.ownerDocument.querySelectorAll(a):a.querySelector&&(o=[a]),this.previews=o,e.forEach(o,i=>{const a=document.createElement("img");e.setData(i,t.DATA_PREVIEW,{width:i.offsetWidth,height:i.offsetHeight,html:i.innerHTML}),s&&(a.crossOrigin=s),a.src=h,a.alt=n,a.style.cssText='display:block;width:100%;height:auto;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;image-orientation:0deg!important;"',i.innerHTML="",i.appendChild(a)})},resetPreview(){e.forEach(this.previews,i=>{const s=e.getData(i,t.DATA_PREVIEW);e.setStyle(i,{width:s.width,height:s.height}),i.innerHTML=s.html,e.removeData(i,t.DATA_PREVIEW)})},preview(){const{imageData:i,canvasData:s,cropBoxData:a}=this,{width:h,height:n}=a,{width:r,height:o}=i,g=a.left-s.left-i.left,l=a.top-s.top-i.top;this.cropped&&!this.disabled&&(e.setStyle(this.viewBoxImage,e.assign({width:r,height:o},e.getTransforms(e.assign({translateX:-g,translateY:-l},i)))),e.forEach(this.previews,s=>{const a=e.getData(s,t.DATA_PREVIEW),m=a.width,c=a.height;let d=m,p=c,w=1;h&&(p=n*(w=m/h)),n&&p>c&&(d=h*(w=c/n),p=c),e.setStyle(s,{width:d,height:p}),e.setStyle(s.getElementsByTagName("img")[0],e.assign({width:r*w,height:o*w},e.getTransforms(e.assign({translateX:-g*w,translateY:-l*w},i))))}))}}});
+//# sourceMappingURL=sourcemaps/preview.js.map
