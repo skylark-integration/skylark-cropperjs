@@ -287,11 +287,12 @@ define('skylark-cropperjs/utilities',['./constants'], function (constants) {
     'use strict';
 
 
+
 /**
  * Check if the given value is not a number.
  */
 
-var isNaN = Number.isNaN || WINDOW.isNaN;
+var isNaN = Number.isNaN || constants.WINDOW.isNaN;
 /**
  * Check if the given value is a number.
  * @param {*} value - The value to check.
@@ -632,8 +633,8 @@ var onceSupported = function () {
         once = value;
       }
     });
-    WINDOW.addEventListener('test', listener, options);
-    WINDOW.removeEventListener('test', listener, options);
+    constants.WINDOW.addEventListener('test', listener, options);
+    constants.WINDOW.removeEventListener('test', listener, options);
   }
 
   return supported;
@@ -750,7 +751,7 @@ function getOffset(element) {
     top: box.top + (window.pageYOffset - document.documentElement.clientTop)
   };
 }
-var location = WINDOW.location;
+var location = constants.WINDOW.location;
 var REGEXP_ORIGINS = /^(\w+:)\/\/([^:/?#]*):?(\d*)/i;
 /**
  * Check if the given URL is a cross origin URL.
