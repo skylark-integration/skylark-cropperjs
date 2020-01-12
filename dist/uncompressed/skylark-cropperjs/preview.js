@@ -1,7 +1,7 @@
 define([
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         initPreview() {
@@ -27,9 +27,9 @@ define([
                 previews = [preview];
             }
             this.previews = previews;
-            b.forEach(previews, el => {
+            utilities.forEach(previews, el => {
                 const img = document.createElement('img');
-                b.setData(el, a.DATA_PREVIEW, {
+                utilities.setData(el, constants.DATA_PREVIEW, {
                     width: el.offsetWidth,
                     height: el.offsetHeight,
                     html: el.innerHTML
@@ -45,14 +45,14 @@ define([
             });
         },
         resetPreview() {
-            b.forEach(this.previews, element => {
-                const data = b.getData(element, a.DATA_PREVIEW);
-                b.setStyle(element, {
+            utilities.forEach(this.previews, element => {
+                const data = utilities.getData(element, constants.DATA_PREVIEW);
+                utilities.setStyle(element, {
                     width: data.width,
                     height: data.height
                 });
                 element.innerHTML = data.html;
-                b.removeData(element, a.DATA_PREVIEW);
+                utilities.removeData(element, constants.DATA_PREVIEW);
             });
         },
         preview() {
@@ -67,15 +67,15 @@ define([
             if (!this.cropped || this.disabled) {
                 return;
             }
-            b.setStyle(this.viewBoxImage, b.assign({
+            utilities.setStyle(this.viewBoxImage, utilities.assign({
                 width,
                 height
-            }, b.getTransforms(b.assign({
+            }, utilities.getTransforms(utilities.assign({
                 translateX: -left,
                 translateY: -top
             }, imageData))));
-            b.forEach(this.previews, element => {
-                const data = b.getData(element, a.DATA_PREVIEW);
+            utilities.forEach(this.previews, element => {
+                const data = utilities.getData(element, constants.DATA_PREVIEW);
                 const originalWidth = data.width;
                 const originalHeight = data.height;
                 let newWidth = originalWidth;
@@ -90,14 +90,14 @@ define([
                     newWidth = cropBoxWidth * ratio;
                     newHeight = originalHeight;
                 }
-                b.setStyle(element, {
+                utilities.setStyle(element, {
                     width: newWidth,
                     height: newHeight
                 });
-                b.setStyle(element.getElementsByTagName('img')[0], b.assign({
+                utilities.setStyle(element.getElementsByTagName('img')[0], utilities.assign({
                     width: width * ratio,
                     height: height * ratio
-                }, b.getTransforms(b.assign({
+                }, utilities.getTransforms(utilities.assign({
                     translateX: -left * ratio,
                     translateY: -top * ratio
                 }, imageData))));

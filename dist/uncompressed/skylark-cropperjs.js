@@ -241,7 +241,7 @@ define('skylark-cropperjs/template',[],function () {
     'use strict';
     return '<div class="cropper-container" touch-action="none">' + '<div class="cropper-wrap-box">' + '<div class="cropper-canvas"></div>' + '</div>' + '<div class="cropper-drag-box"></div>' + '<div class="cropper-crop-box">' + '<span class="cropper-view-box"></span>' + '<span class="cropper-dashed dashed-h"></span>' + '<span class="cropper-dashed dashed-v"></span>' + '<span class="cropper-center"></span>' + '<span class="cropper-face"></span>' + '<span class="cropper-line line-e" data-cropper-action="e"></span>' + '<span class="cropper-line line-n" data-cropper-action="n"></span>' + '<span class="cropper-line line-w" data-cropper-action="w"></span>' + '<span class="cropper-line line-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-e" data-cropper-action="e"></span>' + '<span class="cropper-point point-n" data-cropper-action="n"></span>' + '<span class="cropper-point point-w" data-cropper-action="w"></span>' + '<span class="cropper-point point-s" data-cropper-action="s"></span>' + '<span class="cropper-point point-ne" data-cropper-action="ne"></span>' + '<span class="cropper-point point-nw" data-cropper-action="nw"></span>' + '<span class="cropper-point point-sw" data-cropper-action="sw"></span>' + '<span class="cropper-point point-se" data-cropper-action="se"></span>' + '</div>' + '</div>';
 });
-define('skylark-cropperjs/utilities',['./constants'], function (a) {
+define('skylark-cropperjs/utilities',['./constants'], function (constants) {
     'use strict';
 
 
@@ -570,7 +570,7 @@ var REGEXP_SPACES = /\s\s*/;
 var onceSupported = function () {
   var supported = false;
 
-  if (IS_BROWSER) {
+  if (constants.IS_BROWSER) {
     var once = false;
 
     var listener = function listener() {};
@@ -1232,7 +1232,7 @@ function parseOrientation(orientation) {
 define('skylark-cropperjs/render',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         render() {
@@ -1246,19 +1246,19 @@ define('skylark-cropperjs/render',[
         },
         initContainer() {
             const {element, options, container, cropper} = this;
-            b.addClass(cropper, a.CLASS_HIDDEN);
-            b.removeClass(element, a.CLASS_HIDDEN);
+            utilities.addClass(cropper, constants.CLASS_HIDDEN);
+            utilities.removeClass(element, constants.CLASS_HIDDEN);
             const containerData = {
                 width: Math.max(container.offsetWidth, Number(options.minContainerWidth) || 200),
                 height: Math.max(container.offsetHeight, Number(options.minContainerHeight) || 100)
             };
             this.containerData = containerData;
-            b.setStyle(cropper, {
+            utilities.setStyle(cropper, {
                 width: containerData.width,
                 height: containerData.height
             });
-            b.addClass(element, a.CLASS_HIDDEN);
-            b.removeClass(cropper, a.CLASS_HIDDEN);
+            utilities.addClass(element, constants.CLASS_HIDDEN);
+            utilities.removeClass(cropper, constants.CLASS_HIDDEN);
         },
         initCanvas() {
             const {containerData, imageData} = this;
@@ -1294,8 +1294,8 @@ define('skylark-cropperjs/render',[
             this.canvasData = canvasData;
             this.limited = viewMode === 1 || viewMode === 2;
             this.limitCanvas(true, true);
-            this.initialImageData = b.assign({}, imageData);
-            this.initialCanvasData = b.assign({}, canvasData);
+            this.initialImageData = utilities.assign({}, imageData);
+            this.initialCanvasData = utilities.assign({}, canvasData);
         },
         limitCanvas(sizeLimited, positionLimited) {
             const {options, containerData, canvasData, cropBoxData} = this;
@@ -1333,7 +1333,7 @@ define('skylark-cropperjs/render',[
                 ({
                     width: minCanvasWidth,
                     height: minCanvasHeight
-                } = b.getAdjustedSizes({
+                } = utilities.getAdjustedSizes({
                     aspectRatio,
                     width: minCanvasWidth,
                     height: minCanvasHeight
@@ -1381,7 +1381,7 @@ define('skylark-cropperjs/render',[
                 const {
                     width: naturalWidth,
                     height: naturalHeight
-                } = b.getRotatedSizes({
+                } = utilities.getRotatedSizes({
                     width: imageData.naturalWidth * Math.abs(imageData.scaleX || 1),
                     height: imageData.naturalHeight * Math.abs(imageData.scaleY || 1),
                     degree: imageData.rotate || 0
@@ -1410,10 +1410,10 @@ define('skylark-cropperjs/render',[
             canvasData.top = Math.min(Math.max(canvasData.top, canvasData.minTop), canvasData.maxTop);
             canvasData.oldLeft = canvasData.left;
             canvasData.oldTop = canvasData.top;
-            b.setStyle(this.canvas, b.assign({
+            utilities.setStyle(this.canvas, utilities.assign({
                 width: canvasData.width,
                 height: canvasData.height
-            }, b.getTransforms({
+            }, utilities.getTransforms({
                 translateX: canvasData.left,
                 translateY: canvasData.top
             })));
@@ -1426,16 +1426,16 @@ define('skylark-cropperjs/render',[
             const {canvasData, imageData} = this;
             const width = imageData.naturalWidth * (canvasData.width / canvasData.naturalWidth);
             const height = imageData.naturalHeight * (canvasData.height / canvasData.naturalHeight);
-            b.assign(imageData, {
+            utilities.assign(imageData, {
                 width,
                 height,
                 left: (canvasData.width - width) / 2,
                 top: (canvasData.height - height) / 2
             });
-            b.setStyle(this.image, b.assign({
+            utilities.setStyle(this.image, utilities.assign({
                 width: imageData.width,
                 height: imageData.height
-            }, b.getTransforms(b.assign({
+            }, utilities.getTransforms(utilities.assign({
                 translateX: imageData.left,
                 translateY: imageData.top
             }, imageData))));
@@ -1468,7 +1468,7 @@ define('skylark-cropperjs/render',[
             cropBoxData.top = canvasData.top + (canvasData.height - cropBoxData.height) / 2;
             cropBoxData.oldLeft = cropBoxData.left;
             cropBoxData.oldTop = cropBoxData.top;
-            this.initialCropBoxData = b.assign({}, cropBoxData);
+            this.initialCropBoxData = utilities.assign({}, cropBoxData);
         },
         limitCropBox(sizeLimited, positionLimited) {
             const {options, containerData, canvasData, cropBoxData, limited} = this;
@@ -1533,12 +1533,12 @@ define('skylark-cropperjs/render',[
             cropBoxData.oldLeft = cropBoxData.left;
             cropBoxData.oldTop = cropBoxData.top;
             if (options.movable && options.cropBoxMovable) {
-                b.setData(this.face, a.DATA_ACTION, cropBoxData.width >= containerData.width && cropBoxData.height >= containerData.height ? a.ACTION_MOVE : a.ACTION_ALL);
+                utilities.setData(this.face, constants.DATA_ACTION, cropBoxData.width >= containerData.width && cropBoxData.height >= containerData.height ? constants.ACTION_MOVE : constants.ACTION_ALL);
             }
-            b.setStyle(this.cropBox, b.assign({
+            utilities.setStyle(this.cropBox, utilities.assign({
                 width: cropBoxData.width,
                 height: cropBoxData.height
-            }, b.getTransforms({
+            }, utilities.getTransforms({
                 translateX: cropBoxData.left,
                 translateY: cropBoxData.top
             })));
@@ -1551,14 +1551,14 @@ define('skylark-cropperjs/render',[
         },
         output() {
             this.preview();
-            b.dispatchEvent(this.element, a.EVENT_CROP, this.getData());
+            utilities.dispatchEvent(this.element, constants.EVENT_CROP, this.getData());
         }
     };
 });
 define('skylark-cropperjs/preview',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         initPreview() {
@@ -1584,9 +1584,9 @@ define('skylark-cropperjs/preview',[
                 previews = [preview];
             }
             this.previews = previews;
-            b.forEach(previews, el => {
+            utilities.forEach(previews, el => {
                 const img = document.createElement('img');
-                b.setData(el, a.DATA_PREVIEW, {
+                utilities.setData(el, constants.DATA_PREVIEW, {
                     width: el.offsetWidth,
                     height: el.offsetHeight,
                     html: el.innerHTML
@@ -1602,14 +1602,14 @@ define('skylark-cropperjs/preview',[
             });
         },
         resetPreview() {
-            b.forEach(this.previews, element => {
-                const data = b.getData(element, a.DATA_PREVIEW);
-                b.setStyle(element, {
+            utilities.forEach(this.previews, element => {
+                const data = utilities.getData(element, constants.DATA_PREVIEW);
+                utilities.setStyle(element, {
                     width: data.width,
                     height: data.height
                 });
                 element.innerHTML = data.html;
-                b.removeData(element, a.DATA_PREVIEW);
+                utilities.removeData(element, constants.DATA_PREVIEW);
             });
         },
         preview() {
@@ -1624,15 +1624,15 @@ define('skylark-cropperjs/preview',[
             if (!this.cropped || this.disabled) {
                 return;
             }
-            b.setStyle(this.viewBoxImage, b.assign({
+            utilities.setStyle(this.viewBoxImage, utilities.assign({
                 width,
                 height
-            }, b.getTransforms(b.assign({
+            }, utilities.getTransforms(utilities.assign({
                 translateX: -left,
                 translateY: -top
             }, imageData))));
-            b.forEach(this.previews, element => {
-                const data = b.getData(element, a.DATA_PREVIEW);
+            utilities.forEach(this.previews, element => {
+                const data = utilities.getData(element, constants.DATA_PREVIEW);
                 const originalWidth = data.width;
                 const originalHeight = data.height;
                 let newWidth = originalWidth;
@@ -1647,14 +1647,14 @@ define('skylark-cropperjs/preview',[
                     newWidth = cropBoxWidth * ratio;
                     newHeight = originalHeight;
                 }
-                b.setStyle(element, {
+                utilities.setStyle(element, {
                     width: newWidth,
                     height: newHeight
                 });
-                b.setStyle(element.getElementsByTagName('img')[0], b.assign({
+                utilities.setStyle(element.getElementsByTagName('img')[0], utilities.assign({
                     width: width * ratio,
                     height: height * ratio
-                }, b.getTransforms(b.assign({
+                }, utilities.getTransforms(utilities.assign({
                     translateX: -left * ratio,
                     translateY: -top * ratio
                 }, imageData))));
@@ -1665,73 +1665,73 @@ define('skylark-cropperjs/preview',[
 define('skylark-cropperjs/events',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         bind() {
             const {element, options, cropper} = this;
-            if (b.isFunction(options.cropstart)) {
-                b.addListener(element, a.EVENT_CROP_START, options.cropstart);
+            if (utilities.isFunction(options.cropstart)) {
+                utilities.addListener(element, constants.EVENT_CROP_START, options.cropstart);
             }
-            if (b.isFunction(options.cropmove)) {
-                b.addListener(element, a.EVENT_CROP_MOVE, options.cropmove);
+            if (utilities.isFunction(options.cropmove)) {
+                utilities.addListener(element, constants.EVENT_CROP_MOVE, options.cropmove);
             }
-            if (b.isFunction(options.cropend)) {
-                b.addListener(element, a.EVENT_CROP_END, options.cropend);
+            if (utilities.isFunction(options.cropend)) {
+                utilities.addListener(element, constants.EVENT_CROP_END, options.cropend);
             }
-            if (b.isFunction(options.crop)) {
-                b.addListener(element, a.EVENT_CROP, options.crop);
+            if (utilities.isFunction(options.crop)) {
+                utilities.addListener(element, constants.EVENT_CROP, options.crop);
             }
-            if (b.isFunction(options.zoom)) {
-                b.addListener(element, a.EVENT_ZOOM, options.zoom);
+            if (utilities.isFunction(options.zoom)) {
+                utilities.addListener(element, constants.EVENT_ZOOM, options.zoom);
             }
-            b.addListener(cropper, a.EVENT_POINTER_DOWN, this.onCropStart = this.cropStart.bind(this));
+            utilities.addListener(cropper, constants.EVENT_POINTER_DOWN, this.onCropStart = this.cropStart.bind(this));
             if (options.zoomable && options.zoomOnWheel) {
-                b.addListener(cropper, a.EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
+                utilities.addListener(cropper, constants.EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
                     passive: false,
                     capture: true
                 });
             }
             if (options.toggleDragModeOnDblclick) {
-                b.addListener(cropper, a.EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
+                utilities.addListener(cropper, constants.EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
             }
-            b.addListener(element.ownerDocument, a.EVENT_POINTER_MOVE, this.onCropMove = this.cropMove.bind(this));
-            b.addListener(element.ownerDocument, a.EVENT_POINTER_UP, this.onCropEnd = this.cropEnd.bind(this));
+            utilities.addListener(element.ownerDocument, constants.EVENT_POINTER_MOVE, this.onCropMove = this.cropMove.bind(this));
+            utilities.addListener(element.ownerDocument, constants.EVENT_POINTER_UP, this.onCropEnd = this.cropEnd.bind(this));
             if (options.responsive) {
-                b.addListener(window, a.EVENT_RESIZE, this.onResize = this.resize.bind(this));
+                utilities.addListener(window, constants.EVENT_RESIZE, this.onResize = this.resize.bind(this));
             }
         },
         unbind() {
             const {element, options, cropper} = this;
-            if (b.isFunction(options.cropstart)) {
-                b.removeListener(element, a.EVENT_CROP_START, options.cropstart);
+            if (utilities.isFunction(options.cropstart)) {
+                utilities.removeListener(element, constants.EVENT_CROP_START, options.cropstart);
             }
-            if (b.isFunction(options.cropmove)) {
-                b.removeListener(element, a.EVENT_CROP_MOVE, options.cropmove);
+            if (utilities.isFunction(options.cropmove)) {
+                utilities.removeListener(element, constants.EVENT_CROP_MOVE, options.cropmove);
             }
-            if (b.isFunction(options.cropend)) {
-                b.removeListener(element, a.EVENT_CROP_END, options.cropend);
+            if (utilities.isFunction(options.cropend)) {
+                utilities.removeListener(element, constants.EVENT_CROP_END, options.cropend);
             }
-            if (b.isFunction(options.crop)) {
-                b.removeListener(element, a.EVENT_CROP, options.crop);
+            if (utilities.isFunction(options.crop)) {
+                utilities.removeListener(element, constants.EVENT_CROP, options.crop);
             }
-            if (b.isFunction(options.zoom)) {
-                b.removeListener(element, a.EVENT_ZOOM, options.zoom);
+            if (utilities.isFunction(options.zoom)) {
+                utilities.removeListener(element, constants.EVENT_ZOOM, options.zoom);
             }
-            b.removeListener(cropper, a.EVENT_POINTER_DOWN, this.onCropStart);
+            utilities.removeListener(cropper, constants.EVENT_POINTER_DOWN, this.onCropStart);
             if (options.zoomable && options.zoomOnWheel) {
-                b.removeListener(cropper, a.EVENT_WHEEL, this.onWheel, {
+                utilities.removeListener(cropper, constants.EVENT_WHEEL, this.onWheel, {
                     passive: false,
                     capture: true
                 });
             }
             if (options.toggleDragModeOnDblclick) {
-                b.removeListener(cropper, a.EVENT_DBLCLICK, this.onDblclick);
+                utilities.removeListener(cropper, constants.EVENT_DBLCLICK, this.onDblclick);
             }
-            b.removeListener(element.ownerDocument, a.EVENT_POINTER_MOVE, this.onCropMove);
-            b.removeListener(element.ownerDocument, a.EVENT_POINTER_UP, this.onCropEnd);
+            utilities.removeListener(element.ownerDocument, constants.EVENT_POINTER_MOVE, this.onCropMove);
+            utilities.removeListener(element.ownerDocument, constants.EVENT_POINTER_UP, this.onCropEnd);
             if (options.responsive) {
-                b.removeListener(window, a.EVENT_RESIZE, this.onResize);
+                utilities.removeListener(window, constants.EVENT_RESIZE, this.onResize);
             }
         }
     };
@@ -1739,13 +1739,13 @@ define('skylark-cropperjs/events',[
 define('skylark-cropperjs/handlers',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         resize() {
             const {options, container, containerData} = this;
-            const minContainerWidth = Number(options.minContainerWidth) || a.MIN_CONTAINER_WIDTH;
-            const minContainerHeight = Number(options.minContainerHeight) || a.MIN_CONTAINER_HEIGHT;
+            const minContainerWidth = Number(options.minContainerWidth) || constants.MIN_CONTAINER_WIDTH;
+            const minContainerHeight = Number(options.minContainerHeight) || constants.MIN_CONTAINER_HEIGHT;
             if (this.disabled || containerData.width <= minContainerWidth || containerData.height <= minContainerHeight) {
                 return;
             }
@@ -1759,20 +1759,20 @@ define('skylark-cropperjs/handlers',[
                 }
                 this.render();
                 if (options.restore) {
-                    this.setCanvasData(b.forEach(canvasData, (n, i) => {
+                    this.setCanvasData(utilities.forEach(canvasData, (n, i) => {
                         canvasData[i] = n * ratio;
                     }));
-                    this.setCropBoxData(b.forEach(cropBoxData, (n, i) => {
+                    this.setCropBoxData(utilities.forEach(cropBoxData, (n, i) => {
                         cropBoxData[i] = n * ratio;
                     }));
                 }
             }
         },
         dblclick() {
-            if (this.disabled || this.options.dragMode === a.DRAG_MODE_NONE) {
+            if (this.disabled || this.options.dragMode === constants.DRAG_MODE_NONE) {
                 return;
             }
-            this.setDragMode(b.hasClass(this.dragBox, a.CLASS_CROP) ? a.DRAG_MODE_MOVE : a.DRAG_MODE_CROP);
+            this.setDragMode(utilities.hasClass(this.dragBox, constants.CLASS_CROP) ? constants.DRAG_MODE_MOVE : constants.DRAG_MODE_CROP);
         },
         wheel(event) {
             const ratio = Number(this.options.wheelZoomRatio) || 0.1;
@@ -1799,27 +1799,27 @@ define('skylark-cropperjs/handlers',[
         },
         cropStart(event) {
             const {buttons, button} = event;
-            if (this.disabled || (event.type === 'mousedown' || event.type === 'pointerdown' && event.pointerType === 'mouse') && (b.isNumber(buttons) && buttons !== 1 || b.isNumber(button) && button !== 0 || event.ctrlKey)) {
+            if (this.disabled || (event.type === 'mousedown' || event.type === 'pointerdown' && event.pointerType === 'mouse') && (utilities.isNumber(buttons) && buttons !== 1 || utilities.isNumber(button) && button !== 0 || event.ctrlKey)) {
                 return;
             }
             const {options, pointers} = this;
             let action;
             if (event.changedTouches) {
-                b.forEach(event.changedTouches, touch => {
-                    pointers[touch.identifier] = b.getPointer(touch);
+                utilities.forEach(event.changedTouches, touch => {
+                    pointers[touch.identifier] = utilities.getPointer(touch);
                 });
             } else {
-                pointers[event.pointerId || 0] = b.getPointer(event);
+                pointers[event.pointerId || 0] = utilities.getPointer(event);
             }
             if (Object.keys(pointers).length > 1 && options.zoomable && options.zoomOnTouch) {
-                action = a.ACTION_ZOOM;
+                action = constants.ACTION_ZOOM;
             } else {
-                action = b.getData(event.target, a.DATA_ACTION);
+                action = utilities.getData(event.target, constants.DATA_ACTION);
             }
-            if (!a.REGEXP_ACTIONS.test(action)) {
+            if (!constants.REGEXP_ACTIONS.test(action)) {
                 return;
             }
-            if (b.dispatchEvent(this.element, a.EVENT_CROP_START, {
+            if (utilities.dispatchEvent(this.element, constants.EVENT_CROP_START, {
                     originalEvent: event,
                     action
                 }) === false) {
@@ -1828,9 +1828,9 @@ define('skylark-cropperjs/handlers',[
             event.preventDefault();
             this.action = action;
             this.cropping = false;
-            if (action === a.ACTION_CROP) {
+            if (action === constants.ACTION_CROP) {
                 this.cropping = true;
-                b.addClass(this.dragBox, a.CLASS_MODAL);
+                utilities.addClass(this.dragBox, constants.CLASS_MODAL);
             }
         },
         cropMove(event) {
@@ -1840,18 +1840,18 @@ define('skylark-cropperjs/handlers',[
             }
             const {pointers} = this;
             event.preventDefault();
-            if (b.dispatchEvent(this.element, a.EVENT_CROP_MOVE, {
+            if (utilities.dispatchEvent(this.element, constants.EVENT_CROP_MOVE, {
                     originalEvent: event,
                     action
                 }) === false) {
                 return;
             }
             if (event.changedTouches) {
-                b.forEach(event.changedTouches, touch => {
-                    b.assign(pointers[touch.identifier] || {}, b.getPointer(touch, true));
+                utilities.forEach(event.changedTouches, touch => {
+                    utilities.assign(pointers[touch.identifier] || {}, utilities.getPointer(touch, true));
                 });
             } else {
-                b.assign(pointers[event.pointerId || 0] || {}, b.getPointer(event, true));
+                utilities.assign(pointers[event.pointerId || 0] || {}, utilities.getPointer(event, true));
             }
             this.change(event);
         },
@@ -1861,7 +1861,7 @@ define('skylark-cropperjs/handlers',[
             }
             const {action, pointers} = this;
             if (event.changedTouches) {
-                b.forEach(event.changedTouches, touch => {
+                utilities.forEach(event.changedTouches, touch => {
                     delete pointers[touch.identifier];
                 });
             } else {
@@ -1876,9 +1876,9 @@ define('skylark-cropperjs/handlers',[
             }
             if (this.cropping) {
                 this.cropping = false;
-                b.toggleClass(this.dragBox, a.CLASS_MODAL, this.cropped && this.options.modal);
+                utilities.toggleClass(this.dragBox, constants.CLASS_MODAL, this.cropped && this.options.modal);
             }
-            b.dispatchEvent(this.element, a.EVENT_CROP_END, {
+            utilities.dispatchEvent(this.element, constants.EVENT_CROP_END, {
                 originalEvent: event,
                 action
             });
@@ -1888,7 +1888,7 @@ define('skylark-cropperjs/handlers',[
 define('skylark-cropperjs/change',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         change(event) {
@@ -1919,22 +1919,22 @@ define('skylark-cropperjs/change',[
             };
             const check = side => {
                 switch (side) {
-                case a.ACTION_EAST:
+                case constants.ACTION_EAST:
                     if (right + range.x > maxWidth) {
                         range.x = maxWidth - right;
                     }
                     break;
-                case a.ACTION_WEST:
+                case constants.ACTION_WEST:
                     if (left + range.x < minLeft) {
                         range.x = minLeft - left;
                     }
                     break;
-                case a.ACTION_NORTH:
+                case constants.ACTION_NORTH:
                     if (top + range.y < minTop) {
                         range.y = minTop - top;
                     }
                     break;
-                case a.ACTION_SOUTH:
+                case constants.ACTION_SOUTH:
                     if (bottom + range.y > maxHeight) {
                         range.y = maxHeight - bottom;
                     }
@@ -1943,19 +1943,19 @@ define('skylark-cropperjs/change',[
                 }
             };
             switch (action) {
-            case a.ACTION_ALL:
+            case constants.ACTION_ALL:
                 left += range.x;
                 top += range.y;
                 break;
-            case a.ACTION_EAST:
+            case constants.ACTION_EAST:
                 if (range.x >= 0 && (right >= maxWidth || aspectRatio && (top <= minTop || bottom >= maxHeight))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_EAST);
+                check(constants.ACTION_EAST);
                 width += range.x;
                 if (width < 0) {
-                    action = a.ACTION_WEST;
+                    action = constants.ACTION_WEST;
                     width = -width;
                     left -= width;
                 }
@@ -1964,16 +1964,16 @@ define('skylark-cropperjs/change',[
                     top += (cropBoxData.height - height) / 2;
                 }
                 break;
-            case a.ACTION_NORTH:
+            case constants.ACTION_NORTH:
                 if (range.y <= 0 && (top <= minTop || aspectRatio && (left <= minLeft || right >= maxWidth))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_NORTH);
+                check(constants.ACTION_NORTH);
                 height -= range.y;
                 top += range.y;
                 if (height < 0) {
-                    action = a.ACTION_SOUTH;
+                    action = constants.ACTION_SOUTH;
                     height = -height;
                     top -= height;
                 }
@@ -1982,16 +1982,16 @@ define('skylark-cropperjs/change',[
                     left += (cropBoxData.width - width) / 2;
                 }
                 break;
-            case a.ACTION_WEST:
+            case constants.ACTION_WEST:
                 if (range.x <= 0 && (left <= minLeft || aspectRatio && (top <= minTop || bottom >= maxHeight))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_WEST);
+                check(constants.ACTION_WEST);
                 width -= range.x;
                 left += range.x;
                 if (width < 0) {
-                    action = a.ACTION_EAST;
+                    action = constants.ACTION_EAST;
                     width = -width;
                     left -= width;
                 }
@@ -2000,15 +2000,15 @@ define('skylark-cropperjs/change',[
                     top += (cropBoxData.height - height) / 2;
                 }
                 break;
-            case a.ACTION_SOUTH:
+            case constants.ACTION_SOUTH:
                 if (range.y >= 0 && (bottom >= maxHeight || aspectRatio && (left <= minLeft || right >= maxWidth))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_SOUTH);
+                check(constants.ACTION_SOUTH);
                 height += range.y;
                 if (height < 0) {
-                    action = a.ACTION_NORTH;
+                    action = constants.ACTION_NORTH;
                     height = -height;
                     top -= height;
                 }
@@ -2017,19 +2017,19 @@ define('skylark-cropperjs/change',[
                     left += (cropBoxData.width - width) / 2;
                 }
                 break;
-            case a.ACTION_NORTH_EAST:
+            case constants.ACTION_NORTH_EAST:
                 if (aspectRatio) {
                     if (range.y <= 0 && (top <= minTop || right >= maxWidth)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_NORTH);
+                    check(constants.ACTION_NORTH);
                     height -= range.y;
                     top += range.y;
                     width = height * aspectRatio;
                 } else {
-                    check(a.ACTION_NORTH);
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_NORTH);
+                    check(constants.ACTION_EAST);
                     if (range.x >= 0) {
                         if (right < maxWidth) {
                             width += range.x;
@@ -2050,35 +2050,35 @@ define('skylark-cropperjs/change',[
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_NORTH_WEST:
+            case constants.ACTION_NORTH_WEST:
                 if (aspectRatio) {
                     if (range.y <= 0 && (top <= minTop || left <= minLeft)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_NORTH);
+                    check(constants.ACTION_NORTH);
                     height -= range.y;
                     top += range.y;
                     width = height * aspectRatio;
                     left += cropBoxData.width - width;
                 } else {
-                    check(a.ACTION_NORTH);
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_NORTH);
+                    check(constants.ACTION_WEST);
                     if (range.x <= 0) {
                         if (left > minLeft) {
                             width -= range.x;
@@ -2101,34 +2101,34 @@ define('skylark-cropperjs/change',[
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_SOUTH_WEST:
+            case constants.ACTION_SOUTH_WEST:
                 if (aspectRatio) {
                     if (range.x <= 0 && (left <= minLeft || bottom >= maxHeight)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_WEST);
                     width -= range.x;
                     left += range.x;
                     height = width / aspectRatio;
                 } else {
-                    check(a.ACTION_SOUTH);
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_SOUTH);
+                    check(constants.ACTION_WEST);
                     if (range.x <= 0) {
                         if (left > minLeft) {
                             width -= range.x;
@@ -2149,33 +2149,33 @@ define('skylark-cropperjs/change',[
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_SOUTH_EAST:
+            case constants.ACTION_SOUTH_EAST:
                 if (aspectRatio) {
                     if (range.x >= 0 && (right >= maxWidth || bottom >= maxHeight)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_EAST);
                     width += range.x;
                     height = width / aspectRatio;
                 } else {
-                    check(a.ACTION_SOUTH);
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_SOUTH);
+                    check(constants.ACTION_EAST);
                     if (range.x >= 0) {
                         if (right < maxWidth) {
                             width += range.x;
@@ -2194,50 +2194,50 @@ define('skylark-cropperjs/change',[
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_MOVE:
+            case constants.ACTION_MOVE:
                 this.move(range.x, range.y);
                 renderable = false;
                 break;
-            case a.ACTION_ZOOM:
-                this.zoom(b.getMaxZoomRatio(pointers), event);
+            case constants.ACTION_ZOOM:
+                this.zoom(utilities.getMaxZoomRatio(pointers), event);
                 renderable = false;
                 break;
-            case a.ACTION_CROP:
+            case constants.ACTION_CROP:
                 if (!range.x || !range.y) {
                     renderable = false;
                     break;
                 }
-                offset = b.getOffset(this.cropper);
+                offset = utilities.getOffset(this.cropper);
                 left = pointer.startX - offset.left;
                 top = pointer.startY - offset.top;
                 width = cropBoxData.minWidth;
                 height = cropBoxData.minHeight;
                 if (range.x > 0) {
-                    action = range.y > 0 ? a.ACTION_SOUTH_EAST : a.ACTION_NORTH_EAST;
+                    action = range.y > 0 ? constants.ACTION_SOUTH_EAST : constants.ACTION_NORTH_EAST;
                 } else if (range.x < 0) {
                     left -= width;
-                    action = range.y > 0 ? a.ACTION_SOUTH_WEST : a.ACTION_NORTH_WEST;
+                    action = range.y > 0 ? constants.ACTION_SOUTH_WEST : constants.ACTION_NORTH_WEST;
                 }
                 if (range.y < 0) {
                     top -= height;
                 }
                 if (!this.cropped) {
-                    b.removeClass(this.cropBox, a.CLASS_HIDDEN);
+                    utilities.removeClass(this.cropBox, constants.CLASS_HIDDEN);
                     this.cropped = true;
                     if (this.limited) {
                         this.limitCropBox(true, true);
@@ -2254,7 +2254,7 @@ define('skylark-cropperjs/change',[
                 this.action = action;
                 this.renderCropBox();
             }
-            b.forEach(pointers, p => {
+            utilities.forEach(pointers, p => {
                 p.startX = p.endX;
                 p.startY = p.endY;
             });
@@ -2264,7 +2264,7 @@ define('skylark-cropperjs/change',[
 define('skylark-cropperjs/methods',[
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         crop() {
@@ -2272,18 +2272,18 @@ define('skylark-cropperjs/methods',[
                 this.cropped = true;
                 this.limitCropBox(true, true);
                 if (this.options.modal) {
-                    b.addClass(this.dragBox, a.CLASS_MODAL);
+                    utilities.addClass(this.dragBox, constants.CLASS_MODAL);
                 }
-                b.removeClass(this.cropBox, a.CLASS_HIDDEN);
+                utilities.removeClass(this.cropBox, constants.CLASS_HIDDEN);
                 this.setCropBoxData(this.initialCropBoxData);
             }
             return this;
         },
         reset() {
             if (this.ready && !this.disabled) {
-                this.imageData = b.assign({}, this.initialImageData);
-                this.canvasData = b.assign({}, this.initialCanvasData);
-                this.cropBoxData = b.assign({}, this.initialCropBoxData);
+                this.imageData = utilities.assign({}, this.initialImageData);
+                this.canvasData = utilities.assign({}, this.initialCanvasData);
+                this.cropBoxData = utilities.assign({}, this.initialCropBoxData);
                 this.renderCanvas();
                 if (this.cropped) {
                     this.renderCropBox();
@@ -2293,7 +2293,7 @@ define('skylark-cropperjs/methods',[
         },
         clear() {
             if (this.cropped && !this.disabled) {
-                b.assign(this.cropBoxData, {
+                utilities.assign(this.cropBoxData, {
                     left: 0,
                     top: 0,
                     width: 0,
@@ -2303,8 +2303,8 @@ define('skylark-cropperjs/methods',[
                 this.renderCropBox();
                 this.limitCanvas(true, true);
                 this.renderCanvas();
-                b.removeClass(this.dragBox, a.CLASS_MODAL);
-                b.addClass(this.cropBox, a.CLASS_HIDDEN);
+                utilities.removeClass(this.dragBox, constants.CLASS_MODAL);
+                utilities.addClass(this.cropBox, constants.CLASS_HIDDEN);
             }
             return this;
         },
@@ -2318,7 +2318,7 @@ define('skylark-cropperjs/methods',[
                     this.image.src = url;
                     if (this.ready) {
                         this.viewBoxImage.src = url;
-                        b.forEach(this.previews, element => {
+                        utilities.forEach(this.previews, element => {
                             element.getElementsByTagName('img')[0].src = url;
                         });
                     }
@@ -2336,23 +2336,23 @@ define('skylark-cropperjs/methods',[
         enable() {
             if (this.ready && this.disabled) {
                 this.disabled = false;
-                b.removeClass(this.cropper, a.CLASS_DISABLED);
+                utilities.removeClass(this.cropper, constants.CLASS_DISABLED);
             }
             return this;
         },
         disable() {
             if (this.ready && !this.disabled) {
                 this.disabled = true;
-                b.addClass(this.cropper, a.CLASS_DISABLED);
+                utilities.addClass(this.cropper, constants.CLASS_DISABLED);
             }
             return this;
         },
         destroy() {
             const {element} = this;
-            if (!element[a.NAMESPACE]) {
+            if (!element[constants.NAMESPACE]) {
                 return this;
             }
-            element[a.NAMESPACE] = undefined;
+            element[constants.NAMESPACE] = undefined;
             if (this.isImg && this.replaced) {
                 element.src = this.originalUrl;
             }
@@ -2361,7 +2361,7 @@ define('skylark-cropperjs/methods',[
         },
         move(offsetX, offsetY = offsetX) {
             const {left, top} = this.canvasData;
-            return this.moveTo(b.isUndefined(offsetX) ? offsetX : left + Number(offsetX), b.isUndefined(offsetY) ? offsetY : top + Number(offsetY));
+            return this.moveTo(utilities.isUndefined(offsetX) ? offsetX : left + Number(offsetX), utilities.isUndefined(offsetY) ? offsetY : top + Number(offsetY));
         },
         moveTo(x, y = x) {
             const {canvasData} = this;
@@ -2369,11 +2369,11 @@ define('skylark-cropperjs/methods',[
             x = Number(x);
             y = Number(y);
             if (this.ready && !this.disabled && this.options.movable) {
-                if (b.isNumber(x)) {
+                if (utilities.isNumber(x)) {
                     canvasData.left = x;
                     changed = true;
                 }
-                if (b.isNumber(y)) {
+                if (utilities.isNumber(y)) {
                     canvasData.top = y;
                     changed = true;
                 }
@@ -2400,7 +2400,7 @@ define('skylark-cropperjs/methods',[
             if (ratio >= 0 && this.ready && !this.disabled && options.zoomable) {
                 const newWidth = naturalWidth * ratio;
                 const newHeight = naturalHeight * ratio;
-                if (b.dispatchEvent(this.element, a.EVENT_ZOOM, {
+                if (utilities.dispatchEvent(this.element, constants.EVENT_ZOOM, {
                         ratio,
                         oldRatio: width / naturalWidth,
                         originalEvent: _originalEvent
@@ -2409,14 +2409,14 @@ define('skylark-cropperjs/methods',[
                 }
                 if (_originalEvent) {
                     const {pointers} = this;
-                    const offset = b.getOffset(this.cropper);
-                    const center = pointers && Object.keys(pointers).length ? b.getPointersCenter(pointers) : {
+                    const offset = utilities.getOffset(this.cropper);
+                    const center = pointers && Object.keys(pointers).length ? utilities.getPointersCenter(pointers) : {
                         pageX: _originalEvent.pageX,
                         pageY: _originalEvent.pageY
                     };
                     canvasData.left -= (newWidth - width) * ((center.pageX - offset.left - canvasData.left) / width);
                     canvasData.top -= (newHeight - height) * ((center.pageY - offset.top - canvasData.top) / height);
-                } else if (b.isPlainObject(pivot) && b.isNumber(pivot.x) && b.isNumber(pivot.y)) {
+                } else if (utilities.isPlainObject(pivot) && utilities.isNumber(pivot.x) && utilities.isNumber(pivot.y)) {
                     canvasData.left -= (newWidth - width) * ((pivot.x - canvasData.left) / width);
                     canvasData.top -= (newHeight - height) * ((pivot.y - canvasData.top) / height);
                 } else {
@@ -2434,7 +2434,7 @@ define('skylark-cropperjs/methods',[
         },
         rotateTo(degree) {
             degree = Number(degree);
-            if (b.isNumber(degree) && this.ready && !this.disabled && this.options.rotatable) {
+            if (utilities.isNumber(degree) && this.ready && !this.disabled && this.options.rotatable) {
                 this.imageData.rotate = degree % 360;
                 this.renderCanvas(true, true);
             }
@@ -2442,11 +2442,11 @@ define('skylark-cropperjs/methods',[
         },
         scaleX(scaleX) {
             const {scaleY} = this.imageData;
-            return this.scale(scaleX, b.isNumber(scaleY) ? scaleY : 1);
+            return this.scale(scaleX, utilities.isNumber(scaleY) ? scaleY : 1);
         },
         scaleY(scaleY) {
             const {scaleX} = this.imageData;
-            return this.scale(b.isNumber(scaleX) ? scaleX : 1, scaleY);
+            return this.scale(utilities.isNumber(scaleX) ? scaleX : 1, scaleY);
         },
         scale(scaleX, scaleY = scaleX) {
             const {imageData} = this;
@@ -2454,11 +2454,11 @@ define('skylark-cropperjs/methods',[
             scaleX = Number(scaleX);
             scaleY = Number(scaleY);
             if (this.ready && !this.disabled && this.options.scalable) {
-                if (b.isNumber(scaleX)) {
+                if (utilities.isNumber(scaleX)) {
                     imageData.scaleX = scaleX;
                     transformed = true;
                 }
-                if (b.isNumber(scaleY)) {
+                if (utilities.isNumber(scaleY)) {
                     imageData.scaleY = scaleY;
                     transformed = true;
                 }
@@ -2479,7 +2479,7 @@ define('skylark-cropperjs/methods',[
                     height: cropBoxData.height
                 };
                 const ratio = imageData.width / imageData.naturalWidth;
-                b.forEach(data, (n, i) => {
+                utilities.forEach(data, (n, i) => {
                     data[i] = n / ratio;
                 });
                 if (rounded) {
@@ -2510,20 +2510,20 @@ define('skylark-cropperjs/methods',[
         setData(data) {
             const {options, imageData, canvasData} = this;
             const cropBoxData = {};
-            if (this.ready && !this.disabled && b.isPlainObject(data)) {
+            if (this.ready && !this.disabled && utilities.isPlainObject(data)) {
                 let transformed = false;
                 if (options.rotatable) {
-                    if (b.isNumber(data.rotate) && data.rotate !== imageData.rotate) {
+                    if (utilities.isNumber(data.rotate) && data.rotate !== imageData.rotate) {
                         imageData.rotate = data.rotate;
                         transformed = true;
                     }
                 }
                 if (options.scalable) {
-                    if (b.isNumber(data.scaleX) && data.scaleX !== imageData.scaleX) {
+                    if (utilities.isNumber(data.scaleX) && data.scaleX !== imageData.scaleX) {
                         imageData.scaleX = data.scaleX;
                         transformed = true;
                     }
-                    if (b.isNumber(data.scaleY) && data.scaleY !== imageData.scaleY) {
+                    if (utilities.isNumber(data.scaleY) && data.scaleY !== imageData.scaleY) {
                         imageData.scaleY = data.scaleY;
                         transformed = true;
                     }
@@ -2532,16 +2532,16 @@ define('skylark-cropperjs/methods',[
                     this.renderCanvas(true, true);
                 }
                 const ratio = imageData.width / imageData.naturalWidth;
-                if (b.isNumber(data.x)) {
+                if (utilities.isNumber(data.x)) {
                     cropBoxData.left = data.x * ratio + canvasData.left;
                 }
-                if (b.isNumber(data.y)) {
+                if (utilities.isNumber(data.y)) {
                     cropBoxData.top = data.y * ratio + canvasData.top;
                 }
-                if (b.isNumber(data.width)) {
+                if (utilities.isNumber(data.width)) {
                     cropBoxData.width = data.width * ratio;
                 }
-                if (b.isNumber(data.height)) {
+                if (utilities.isNumber(data.height)) {
                     cropBoxData.height = data.height * ratio;
                 }
                 this.setCropBoxData(cropBoxData);
@@ -2549,16 +2549,16 @@ define('skylark-cropperjs/methods',[
             return this;
         },
         getContainerData() {
-            return this.ready ? b.assign({}, this.containerData) : {};
+            return this.ready ? utilities.assign({}, this.containerData) : {};
         },
         getImageData() {
-            return this.sized ? b.assign({}, this.imageData) : {};
+            return this.sized ? utilities.assign({}, this.imageData) : {};
         },
         getCanvasData() {
             const {canvasData} = this;
             const data = {};
             if (this.ready) {
-                b.forEach([
+                utilities.forEach([
                     'left',
                     'top',
                     'width',
@@ -2574,17 +2574,17 @@ define('skylark-cropperjs/methods',[
         setCanvasData(data) {
             const {canvasData} = this;
             const {aspectRatio} = canvasData;
-            if (this.ready && !this.disabled && b.isPlainObject(data)) {
-                if (b.isNumber(data.left)) {
+            if (this.ready && !this.disabled && utilities.isPlainObject(data)) {
+                if (utilities.isNumber(data.left)) {
                     canvasData.left = data.left;
                 }
-                if (b.isNumber(data.top)) {
+                if (utilities.isNumber(data.top)) {
                     canvasData.top = data.top;
                 }
-                if (b.isNumber(data.width)) {
+                if (utilities.isNumber(data.width)) {
                     canvasData.width = data.width;
                     canvasData.height = data.width / aspectRatio;
-                } else if (b.isNumber(data.height)) {
+                } else if (utilities.isNumber(data.height)) {
                     canvasData.height = data.height;
                     canvasData.width = data.height * aspectRatio;
                 }
@@ -2610,18 +2610,18 @@ define('skylark-cropperjs/methods',[
             const {aspectRatio} = this.options;
             let widthChanged;
             let heightChanged;
-            if (this.ready && this.cropped && !this.disabled && b.isPlainObject(data)) {
-                if (b.isNumber(data.left)) {
+            if (this.ready && this.cropped && !this.disabled && utilities.isPlainObject(data)) {
+                if (utilities.isNumber(data.left)) {
                     cropBoxData.left = data.left;
                 }
-                if (b.isNumber(data.top)) {
+                if (utilities.isNumber(data.top)) {
                     cropBoxData.top = data.top;
                 }
-                if (b.isNumber(data.width) && data.width !== cropBoxData.width) {
+                if (utilities.isNumber(data.width) && data.width !== cropBoxData.width) {
                     widthChanged = true;
                     cropBoxData.width = data.width;
                 }
-                if (b.isNumber(data.height) && data.height !== cropBoxData.height) {
+                if (utilities.isNumber(data.height) && data.height !== cropBoxData.height) {
                     heightChanged = true;
                     cropBoxData.height = data.height;
                 }
@@ -2641,7 +2641,7 @@ define('skylark-cropperjs/methods',[
                 return null;
             }
             const {canvasData} = this;
-            const source = b.getSourceCanvas(this.image, this.imageData, canvasData, options);
+            const source = utilities.getSourceCanvas(this.image, this.imageData, canvasData, options);
             if (!this.cropped) {
                 return source;
             }
@@ -2659,17 +2659,17 @@ define('skylark-cropperjs/methods',[
                 initialHeight *= ratio;
             }
             const aspectRatio = initialWidth / initialHeight;
-            const maxSizes = b.getAdjustedSizes({
+            const maxSizes = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.maxWidth || Infinity,
                 height: options.maxHeight || Infinity
             });
-            const minSizes = b.getAdjustedSizes({
+            const minSizes = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.minWidth || 0,
                 height: options.minHeight || 0
             }, 'cover');
-            let {width, height} = b.getAdjustedSizes({
+            let {width, height} = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.width || (ratio !== 1 ? source.width : initialWidth),
                 height: options.height || (ratio !== 1 ? source.height : initialHeight)
@@ -2678,8 +2678,8 @@ define('skylark-cropperjs/methods',[
             height = Math.min(maxSizes.height, Math.max(minSizes.height, height));
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = b.normalizeDecimalNumber(width);
-            canvas.height = b.normalizeDecimalNumber(height);
+            canvas.width = utilities.normalizeDecimalNumber(width);
+            canvas.height = utilities.normalizeDecimalNumber(height);
             context.fillStyle = options.fillColor || 'transparent';
             context.fillRect(0, 0, width, height);
             const {imageSmoothingEnabled = true, imageSmoothingQuality} = options;
@@ -2737,12 +2737,12 @@ define('skylark-cropperjs/methods',[
                 const scale = width / initialWidth;
                 params.push(dstX * scale, dstY * scale, dstWidth * scale, dstHeight * scale);
             }
-            context.drawImage(source, ...params.map(param => Math.floor(b.normalizeDecimalNumber(param))));
+            context.drawImage(source, ...params.map(param => Math.floor(utilities.normalizeDecimalNumber(param))));
             return canvas;
         },
         setAspectRatio(aspectRatio) {
             const {options} = this;
-            if (!this.disabled && !b.isUndefined(aspectRatio)) {
+            if (!this.disabled && !utilities.isUndefined(aspectRatio)) {
                 options.aspectRatio = Math.max(0, aspectRatio) || NaN;
                 if (this.ready) {
                     this.initCropBox();
@@ -2756,17 +2756,17 @@ define('skylark-cropperjs/methods',[
         setDragMode(mode) {
             const {options, dragBox, face} = this;
             if (this.ready && !this.disabled) {
-                const croppable = mode === a.DRAG_MODE_CROP;
-                const movable = options.movable && mode === a.DRAG_MODE_MOVE;
-                mode = croppable || movable ? mode : a.DRAG_MODE_NONE;
+                const croppable = mode === constants.DRAG_MODE_CROP;
+                const movable = options.movable && mode === constants.DRAG_MODE_MOVE;
+                mode = croppable || movable ? mode : constants.DRAG_MODE_NONE;
                 options.dragMode = mode;
-                b.setData(dragBox, a.DATA_ACTION, mode);
-                b.toggleClass(dragBox, a.CLASS_CROP, croppable);
-                b.toggleClass(dragBox, a.CLASS_MOVE, movable);
+                utilities.setData(dragBox, constants.DATA_ACTION, mode);
+                utilities.toggleClass(dragBox, constants.CLASS_CROP, croppable);
+                utilities.toggleClass(dragBox, constants.CLASS_MOVE, movable);
                 if (!options.cropBoxMovable) {
-                    b.setData(face, a.DATA_ACTION, mode);
-                    b.toggleClass(face, a.CLASS_CROP, croppable);
-                    b.toggleClass(face, a.CLASS_MOVE, movable);
+                    utilities.setData(face, constants.DATA_ACTION, mode);
+                    utilities.toggleClass(face, constants.CLASS_CROP, croppable);
+                    utilities.toggleClass(face, constants.CLASS_MOVE, movable);
                 }
             }
             return this;
@@ -2785,16 +2785,16 @@ define('skylark-cropperjs/Cropper',[
     './methods',
     './constants',
     './utilities'
-], function (skylark, DEFAULTS, TEMPLATE, render, preview, events, handlers, change, methods, a, b) {
+], function (skylark, DEFAULTS, TEMPLATE, render, preview, events, handlers, change, methods, constants, utilities) {
     'use strict';
-    const AnotherCropper = a.WINDOW.Cropper;
+    const AnotherCropper = constants.WINDOW.Cropper;
     class Cropper {
         constructor(element, options = {}) {
-            if (!element || !a.REGEXP_TAG_NAME.test(element.tagName)) {
+            if (!element || !constants.REGEXP_TAG_NAME.test(element.tagName)) {
                 throw new Error('The first argument is required and must be an <img> or <canvas> element.');
             }
             this.element = element;
-            this.options = b.assign({}, DEFAULTS, b.isPlainObject(options) && options);
+            this.options = utilities.assign({}, DEFAULTS, utilities.isPlainObject(options) && options);
             this.cropped = false;
             this.disabled = false;
             this.pointers = {};
@@ -2809,10 +2809,10 @@ define('skylark-cropperjs/Cropper',[
             const {element} = this;
             const tagName = element.tagName.toLowerCase();
             let url;
-            if (element[a.NAMESPACE]) {
+            if (element[constants.NAMESPACE]) {
                 return;
             }
-            element[a.NAMESPACE] = this;
+            element[constants.NAMESPACE] = this;
             if (tagName === 'img') {
                 this.isImg = true;
                 url = element.getAttribute('src') || '';
@@ -2840,9 +2840,9 @@ define('skylark-cropperjs/Cropper',[
                 this.clone();
                 return;
             }
-            if (a.REGEXP_DATA_URL.test(url)) {
-                if (a.REGEXP_DATA_URL_JPEG.test(url)) {
-                    this.read(b.dataURLToArrayBuffer(url));
+            if (constants.REGEXP_DATA_URL.test(url)) {
+                if (constants.REGEXP_DATA_URL_JPEG.test(url)) {
+                    this.read(utilities.dataURLToArrayBuffer(url));
                 } else {
                     this.clone();
                 }
@@ -2856,7 +2856,7 @@ define('skylark-cropperjs/Cropper',[
             xhr.onerror = clone;
             xhr.ontimeout = clone;
             xhr.onprogress = () => {
-                if (xhr.getResponseHeader('content-type') !== a.MIME_TYPE_JPEG) {
+                if (xhr.getResponseHeader('content-type') !== constants.MIME_TYPE_JPEG) {
                     xhr.abort();
                 }
             };
@@ -2867,8 +2867,8 @@ define('skylark-cropperjs/Cropper',[
                 this.reloading = false;
                 this.xhr = null;
             };
-            if (options.checkCrossOrigin && b.isCrossOriginURL(url) && element.crossOrigin) {
-                url = b.addTimestamp(url);
+            if (options.checkCrossOrigin && utilities.isCrossOriginURL(url) && element.crossOrigin) {
+                url = utilities.addTimestamp(url);
             }
             xhr.open('GET', url);
             xhr.responseType = 'arraybuffer';
@@ -2877,13 +2877,13 @@ define('skylark-cropperjs/Cropper',[
         }
         read(arrayBuffer) {
             const {options, imageData} = this;
-            const orientation = b.resetAndGetOrientation(arrayBuffer);
+            const orientation = utilities.resetAndGetOrientation(arrayBuffer);
             let rotate = 0;
             let scaleX = 1;
             let scaleY = 1;
             if (orientation > 1) {
-                this.url = b.arrayBufferToDataURL(arrayBuffer, a.MIME_TYPE_JPEG);
-                ({rotate, scaleX, scaleY} = b.parseOrientation(orientation));
+                this.url = utilities.arrayBufferToDataURL(arrayBuffer, constants.MIME_TYPE_JPEG);
+                ({rotate, scaleX, scaleY} = utilities.parseOrientation(orientation));
             }
             if (options.rotatable) {
                 imageData.rotate = rotate;
@@ -2898,11 +2898,11 @@ define('skylark-cropperjs/Cropper',[
             const {element, url} = this;
             let {crossOrigin} = element;
             let crossOriginUrl = url;
-            if (this.options.checkCrossOrigin && b.isCrossOriginURL(url)) {
+            if (this.options.checkCrossOrigin && utilities.isCrossOriginURL(url)) {
                 if (!crossOrigin) {
                     crossOrigin = 'anonymous';
                 }
-                crossOriginUrl = b.addTimestamp(url);
+                crossOriginUrl = utilities.addTimestamp(url);
             }
             this.crossOrigin = crossOrigin;
             this.crossOriginUrl = crossOriginUrl;
@@ -2915,7 +2915,7 @@ define('skylark-cropperjs/Cropper',[
             this.image = image;
             image.onload = this.start.bind(this);
             image.onerror = this.stop.bind(this);
-            b.addClass(image, a.CLASS_HIDE);
+            utilities.addClass(image, constants.CLASS_HIDE);
             element.parentNode.insertBefore(image, element.nextSibling);
         }
         start() {
@@ -2923,9 +2923,9 @@ define('skylark-cropperjs/Cropper',[
             image.onload = null;
             image.onerror = null;
             this.sizing = true;
-            const isIOSWebKit = a.WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(a.WINDOW.navigator.userAgent);
+            const isIOSWebKit = constants.WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(constants.WINDOW.navigator.userAgent);
             const done = (naturalWidth, naturalHeight) => {
-                b.assign(this.imageData, {
+                utilities.assign(this.imageData, {
                     naturalWidth,
                     naturalHeight,
                     aspectRatio: naturalWidth / naturalHeight
@@ -2968,49 +2968,49 @@ define('skylark-cropperjs/Cropper',[
             const container = element.parentNode;
             const template = document.createElement('div');
             template.innerHTML = TEMPLATE;
-            const cropper = template.querySelector(`.${ a.NAMESPACE }-container`);
-            const canvas = cropper.querySelector(`.${ a.NAMESPACE }-canvas`);
-            const dragBox = cropper.querySelector(`.${ a.NAMESPACE }-drag-box`);
-            const cropBox = cropper.querySelector(`.${ a.NAMESPACE }-crop-box`);
-            const face = cropBox.querySelector(`.${ a.NAMESPACE }-face`);
+            const cropper = template.querySelector(`.${ constants.NAMESPACE }-container`);
+            const canvas = cropper.querySelector(`.${ constants.NAMESPACE }-canvas`);
+            const dragBox = cropper.querySelector(`.${ constants.NAMESPACE }-drag-box`);
+            const cropBox = cropper.querySelector(`.${ constants.NAMESPACE }-crop-box`);
+            const face = cropBox.querySelector(`.${ constants.NAMESPACE }-face`);
             this.container = container;
             this.cropper = cropper;
             this.canvas = canvas;
             this.dragBox = dragBox;
             this.cropBox = cropBox;
-            this.viewBox = cropper.querySelector(`.${ a.NAMESPACE }-view-box`);
+            this.viewBox = cropper.querySelector(`.${ constants.NAMESPACE }-view-box`);
             this.face = face;
             canvas.appendChild(image);
-            b.addClass(element, a.CLASS_HIDDEN);
+            utilities.addClass(element, constants.CLASS_HIDDEN);
             container.insertBefore(cropper, element.nextSibling);
             if (!this.isImg) {
-                b.removeClass(image, a.CLASS_HIDE);
+                utilities.removeClass(image, constants.CLASS_HIDE);
             }
             this.initPreview();
             this.bind();
             options.initialAspectRatio = Math.max(0, options.initialAspectRatio) || NaN;
             options.aspectRatio = Math.max(0, options.aspectRatio) || NaN;
             options.viewMode = Math.max(0, Math.min(3, Math.round(options.viewMode))) || 0;
-            b.addClass(cropBox, a.CLASS_HIDDEN);
+            utilities.addClass(cropBox, constants.CLASS_HIDDEN);
             if (!options.guides) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-dashed`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-dashed`), constants.CLASS_HIDDEN);
             }
             if (!options.center) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-center`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-center`), constants.CLASS_HIDDEN);
             }
             if (options.background) {
-                b.addClass(cropper, `${ a.NAMESPACE }-bg`);
+                utilities.addClass(cropper, `${ constants.NAMESPACE }-bg`);
             }
             if (!options.highlight) {
-                b.addClass(face, a.CLASS_INVISIBLE);
+                utilities.addClass(face, constants.CLASS_INVISIBLE);
             }
             if (options.cropBoxMovable) {
-                b.addClass(face, a.CLASS_MOVE);
-                b.setData(face, a.DATA_ACTION, a.ACTION_ALL);
+                utilities.addClass(face, constants.CLASS_MOVE);
+                utilities.setData(face, constants.DATA_ACTION, constants.ACTION_ALL);
             }
             if (!options.cropBoxResizable) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-line`), a.CLASS_HIDDEN);
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-point`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-line`), constants.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-point`), constants.CLASS_HIDDEN);
             }
             this.render();
             this.ready = true;
@@ -3019,10 +3019,10 @@ define('skylark-cropperjs/Cropper',[
                 this.crop();
             }
             this.undefined(options.data);
-            if (b.isFunction(options.ready)) {
-                b.addListener(element, a.EVENT_READY, options.ready, { once: true });
+            if (utilities.isFunction(options.ready)) {
+                utilities.addListener(element, constants.EVENT_READY, options.ready, { once: true });
             }
-            b.dispatchEvent(element, a.EVENT_READY);
+            utilities.dispatchEvent(element, constants.EVENT_READY);
         }
         unbuild() {
             if (!this.ready) {
@@ -3032,7 +3032,7 @@ define('skylark-cropperjs/Cropper',[
             this.unbind();
             this.resetPreview();
             this.cropper.parentNode.removeChild(this.cropper);
-            b.removeClass(this.element, a.CLASS_HIDDEN);
+            utilities.removeClass(this.element, constants.CLASS_HIDDEN);
         }
         uncreate() {
             if (this.ready) {
@@ -3055,10 +3055,10 @@ define('skylark-cropperjs/Cropper',[
             return Cropper;
         }
         static setDefaults(options) {
-            b.assign(DEFAULTS, b.isPlainObject(options) && options);
+            utilities.assign(DEFAULTS, utilities.isPlainObject(options) && options);
         }
     }
-    b.assign(Cropper.prototype, render, preview, events, handlers, change, methods);
+    utilities.assign(Cropper.prototype, render, preview, events, handlers, change, methods);
     return skylark.attach('intg.Cropper', Cropper);
 });
 define('skylark-cropperjs/main',[

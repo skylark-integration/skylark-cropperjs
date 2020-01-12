@@ -1,7 +1,7 @@
 define([
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         render() {
@@ -15,19 +15,19 @@ define([
         },
         initContainer() {
             const {element, options, container, cropper} = this;
-            b.addClass(cropper, a.CLASS_HIDDEN);
-            b.removeClass(element, a.CLASS_HIDDEN);
+            utilities.addClass(cropper, constants.CLASS_HIDDEN);
+            utilities.removeClass(element, constants.CLASS_HIDDEN);
             const containerData = {
                 width: Math.max(container.offsetWidth, Number(options.minContainerWidth) || 200),
                 height: Math.max(container.offsetHeight, Number(options.minContainerHeight) || 100)
             };
             this.containerData = containerData;
-            b.setStyle(cropper, {
+            utilities.setStyle(cropper, {
                 width: containerData.width,
                 height: containerData.height
             });
-            b.addClass(element, a.CLASS_HIDDEN);
-            b.removeClass(cropper, a.CLASS_HIDDEN);
+            utilities.addClass(element, constants.CLASS_HIDDEN);
+            utilities.removeClass(cropper, constants.CLASS_HIDDEN);
         },
         initCanvas() {
             const {containerData, imageData} = this;
@@ -63,8 +63,8 @@ define([
             this.canvasData = canvasData;
             this.limited = viewMode === 1 || viewMode === 2;
             this.limitCanvas(true, true);
-            this.initialImageData = b.assign({}, imageData);
-            this.initialCanvasData = b.assign({}, canvasData);
+            this.initialImageData = utilities.assign({}, imageData);
+            this.initialCanvasData = utilities.assign({}, canvasData);
         },
         limitCanvas(sizeLimited, positionLimited) {
             const {options, containerData, canvasData, cropBoxData} = this;
@@ -102,7 +102,7 @@ define([
                 ({
                     width: minCanvasWidth,
                     height: minCanvasHeight
-                } = b.getAdjustedSizes({
+                } = utilities.getAdjustedSizes({
                     aspectRatio,
                     width: minCanvasWidth,
                     height: minCanvasHeight
@@ -150,7 +150,7 @@ define([
                 const {
                     width: naturalWidth,
                     height: naturalHeight
-                } = b.getRotatedSizes({
+                } = utilities.getRotatedSizes({
                     width: imageData.naturalWidth * Math.abs(imageData.scaleX || 1),
                     height: imageData.naturalHeight * Math.abs(imageData.scaleY || 1),
                     degree: imageData.rotate || 0
@@ -179,10 +179,10 @@ define([
             canvasData.top = Math.min(Math.max(canvasData.top, canvasData.minTop), canvasData.maxTop);
             canvasData.oldLeft = canvasData.left;
             canvasData.oldTop = canvasData.top;
-            b.setStyle(this.canvas, b.assign({
+            utilities.setStyle(this.canvas, utilities.assign({
                 width: canvasData.width,
                 height: canvasData.height
-            }, b.getTransforms({
+            }, utilities.getTransforms({
                 translateX: canvasData.left,
                 translateY: canvasData.top
             })));
@@ -195,16 +195,16 @@ define([
             const {canvasData, imageData} = this;
             const width = imageData.naturalWidth * (canvasData.width / canvasData.naturalWidth);
             const height = imageData.naturalHeight * (canvasData.height / canvasData.naturalHeight);
-            b.assign(imageData, {
+            utilities.assign(imageData, {
                 width,
                 height,
                 left: (canvasData.width - width) / 2,
                 top: (canvasData.height - height) / 2
             });
-            b.setStyle(this.image, b.assign({
+            utilities.setStyle(this.image, utilities.assign({
                 width: imageData.width,
                 height: imageData.height
-            }, b.getTransforms(b.assign({
+            }, utilities.getTransforms(utilities.assign({
                 translateX: imageData.left,
                 translateY: imageData.top
             }, imageData))));
@@ -237,7 +237,7 @@ define([
             cropBoxData.top = canvasData.top + (canvasData.height - cropBoxData.height) / 2;
             cropBoxData.oldLeft = cropBoxData.left;
             cropBoxData.oldTop = cropBoxData.top;
-            this.initialCropBoxData = b.assign({}, cropBoxData);
+            this.initialCropBoxData = utilities.assign({}, cropBoxData);
         },
         limitCropBox(sizeLimited, positionLimited) {
             const {options, containerData, canvasData, cropBoxData, limited} = this;
@@ -302,12 +302,12 @@ define([
             cropBoxData.oldLeft = cropBoxData.left;
             cropBoxData.oldTop = cropBoxData.top;
             if (options.movable && options.cropBoxMovable) {
-                b.setData(this.face, a.DATA_ACTION, cropBoxData.width >= containerData.width && cropBoxData.height >= containerData.height ? a.ACTION_MOVE : a.ACTION_ALL);
+                utilities.setData(this.face, constants.DATA_ACTION, cropBoxData.width >= containerData.width && cropBoxData.height >= containerData.height ? constants.ACTION_MOVE : constants.ACTION_ALL);
             }
-            b.setStyle(this.cropBox, b.assign({
+            utilities.setStyle(this.cropBox, utilities.assign({
                 width: cropBoxData.width,
                 height: cropBoxData.height
-            }, b.getTransforms({
+            }, utilities.getTransforms({
                 translateX: cropBoxData.left,
                 translateY: cropBoxData.top
             })));
@@ -320,7 +320,7 @@ define([
         },
         output() {
             this.preview();
-            b.dispatchEvent(this.element, a.EVENT_CROP, this.getData());
+            utilities.dispatchEvent(this.element, constants.EVENT_CROP, this.getData());
         }
     };
 });

@@ -1,4 +1,4 @@
-define(['./constants'], function (a) {
+define(['./constants'], function (constants) {
     'use strict';
 
 
@@ -327,7 +327,7 @@ var REGEXP_SPACES = /\s\s*/;
 var onceSupported = function () {
   var supported = false;
 
-  if (IS_BROWSER) {
+  if (constants.IS_BROWSER) {
     var once = false;
 
     var listener = function listener() {};

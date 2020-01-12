@@ -10,16 +10,16 @@ define([
     './methods',
     './constants',
     './utilities'
-], function (skylark, DEFAULTS, TEMPLATE, render, preview, events, handlers, change, methods, a, b) {
+], function (skylark, DEFAULTS, TEMPLATE, render, preview, events, handlers, change, methods, constants, utilities) {
     'use strict';
-    const AnotherCropper = a.WINDOW.Cropper;
+    const AnotherCropper = constants.WINDOW.Cropper;
     class Cropper {
         constructor(element, options = {}) {
-            if (!element || !a.REGEXP_TAG_NAME.test(element.tagName)) {
+            if (!element || !constants.REGEXP_TAG_NAME.test(element.tagName)) {
                 throw new Error('The first argument is required and must be an <img> or <canvas> element.');
             }
             this.element = element;
-            this.options = b.assign({}, DEFAULTS, b.isPlainObject(options) && options);
+            this.options = utilities.assign({}, DEFAULTS, utilities.isPlainObject(options) && options);
             this.cropped = false;
             this.disabled = false;
             this.pointers = {};
@@ -34,10 +34,10 @@ define([
             const {element} = this;
             const tagName = element.tagName.toLowerCase();
             let url;
-            if (element[a.NAMESPACE]) {
+            if (element[constants.NAMESPACE]) {
                 return;
             }
-            element[a.NAMESPACE] = this;
+            element[constants.NAMESPACE] = this;
             if (tagName === 'img') {
                 this.isImg = true;
                 url = element.getAttribute('src') || '';
@@ -65,9 +65,9 @@ define([
                 this.clone();
                 return;
             }
-            if (a.REGEXP_DATA_URL.test(url)) {
-                if (a.REGEXP_DATA_URL_JPEG.test(url)) {
-                    this.read(b.dataURLToArrayBuffer(url));
+            if (constants.REGEXP_DATA_URL.test(url)) {
+                if (constants.REGEXP_DATA_URL_JPEG.test(url)) {
+                    this.read(utilities.dataURLToArrayBuffer(url));
                 } else {
                     this.clone();
                 }
@@ -81,7 +81,7 @@ define([
             xhr.onerror = clone;
             xhr.ontimeout = clone;
             xhr.onprogress = () => {
-                if (xhr.getResponseHeader('content-type') !== a.MIME_TYPE_JPEG) {
+                if (xhr.getResponseHeader('content-type') !== constants.MIME_TYPE_JPEG) {
                     xhr.abort();
                 }
             };
@@ -92,8 +92,8 @@ define([
                 this.reloading = false;
                 this.xhr = null;
             };
-            if (options.checkCrossOrigin && b.isCrossOriginURL(url) && element.crossOrigin) {
-                url = b.addTimestamp(url);
+            if (options.checkCrossOrigin && utilities.isCrossOriginURL(url) && element.crossOrigin) {
+                url = utilities.addTimestamp(url);
             }
             xhr.open('GET', url);
             xhr.responseType = 'arraybuffer';
@@ -102,13 +102,13 @@ define([
         }
         read(arrayBuffer) {
             const {options, imageData} = this;
-            const orientation = b.resetAndGetOrientation(arrayBuffer);
+            const orientation = utilities.resetAndGetOrientation(arrayBuffer);
             let rotate = 0;
             let scaleX = 1;
             let scaleY = 1;
             if (orientation > 1) {
-                this.url = b.arrayBufferToDataURL(arrayBuffer, a.MIME_TYPE_JPEG);
-                ({rotate, scaleX, scaleY} = b.parseOrientation(orientation));
+                this.url = utilities.arrayBufferToDataURL(arrayBuffer, constants.MIME_TYPE_JPEG);
+                ({rotate, scaleX, scaleY} = utilities.parseOrientation(orientation));
             }
             if (options.rotatable) {
                 imageData.rotate = rotate;
@@ -123,11 +123,11 @@ define([
             const {element, url} = this;
             let {crossOrigin} = element;
             let crossOriginUrl = url;
-            if (this.options.checkCrossOrigin && b.isCrossOriginURL(url)) {
+            if (this.options.checkCrossOrigin && utilities.isCrossOriginURL(url)) {
                 if (!crossOrigin) {
                     crossOrigin = 'anonymous';
                 }
-                crossOriginUrl = b.addTimestamp(url);
+                crossOriginUrl = utilities.addTimestamp(url);
             }
             this.crossOrigin = crossOrigin;
             this.crossOriginUrl = crossOriginUrl;
@@ -140,7 +140,7 @@ define([
             this.image = image;
             image.onload = this.start.bind(this);
             image.onerror = this.stop.bind(this);
-            b.addClass(image, a.CLASS_HIDE);
+            utilities.addClass(image, constants.CLASS_HIDE);
             element.parentNode.insertBefore(image, element.nextSibling);
         }
         start() {
@@ -148,9 +148,9 @@ define([
             image.onload = null;
             image.onerror = null;
             this.sizing = true;
-            const isIOSWebKit = a.WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(a.WINDOW.navigator.userAgent);
+            const isIOSWebKit = constants.WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(constants.WINDOW.navigator.userAgent);
             const done = (naturalWidth, naturalHeight) => {
-                b.assign(this.imageData, {
+                utilities.assign(this.imageData, {
                     naturalWidth,
                     naturalHeight,
                     aspectRatio: naturalWidth / naturalHeight
@@ -193,49 +193,49 @@ define([
             const container = element.parentNode;
             const template = document.createElement('div');
             template.innerHTML = TEMPLATE;
-            const cropper = template.querySelector(`.${ a.NAMESPACE }-container`);
-            const canvas = cropper.querySelector(`.${ a.NAMESPACE }-canvas`);
-            const dragBox = cropper.querySelector(`.${ a.NAMESPACE }-drag-box`);
-            const cropBox = cropper.querySelector(`.${ a.NAMESPACE }-crop-box`);
-            const face = cropBox.querySelector(`.${ a.NAMESPACE }-face`);
+            const cropper = template.querySelector(`.${ constants.NAMESPACE }-container`);
+            const canvas = cropper.querySelector(`.${ constants.NAMESPACE }-canvas`);
+            const dragBox = cropper.querySelector(`.${ constants.NAMESPACE }-drag-box`);
+            const cropBox = cropper.querySelector(`.${ constants.NAMESPACE }-crop-box`);
+            const face = cropBox.querySelector(`.${ constants.NAMESPACE }-face`);
             this.container = container;
             this.cropper = cropper;
             this.canvas = canvas;
             this.dragBox = dragBox;
             this.cropBox = cropBox;
-            this.viewBox = cropper.querySelector(`.${ a.NAMESPACE }-view-box`);
+            this.viewBox = cropper.querySelector(`.${ constants.NAMESPACE }-view-box`);
             this.face = face;
             canvas.appendChild(image);
-            b.addClass(element, a.CLASS_HIDDEN);
+            utilities.addClass(element, constants.CLASS_HIDDEN);
             container.insertBefore(cropper, element.nextSibling);
             if (!this.isImg) {
-                b.removeClass(image, a.CLASS_HIDE);
+                utilities.removeClass(image, constants.CLASS_HIDE);
             }
             this.initPreview();
             this.bind();
             options.initialAspectRatio = Math.max(0, options.initialAspectRatio) || NaN;
             options.aspectRatio = Math.max(0, options.aspectRatio) || NaN;
             options.viewMode = Math.max(0, Math.min(3, Math.round(options.viewMode))) || 0;
-            b.addClass(cropBox, a.CLASS_HIDDEN);
+            utilities.addClass(cropBox, constants.CLASS_HIDDEN);
             if (!options.guides) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-dashed`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-dashed`), constants.CLASS_HIDDEN);
             }
             if (!options.center) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-center`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-center`), constants.CLASS_HIDDEN);
             }
             if (options.background) {
-                b.addClass(cropper, `${ a.NAMESPACE }-bg`);
+                utilities.addClass(cropper, `${ constants.NAMESPACE }-bg`);
             }
             if (!options.highlight) {
-                b.addClass(face, a.CLASS_INVISIBLE);
+                utilities.addClass(face, constants.CLASS_INVISIBLE);
             }
             if (options.cropBoxMovable) {
-                b.addClass(face, a.CLASS_MOVE);
-                b.setData(face, a.DATA_ACTION, a.ACTION_ALL);
+                utilities.addClass(face, constants.CLASS_MOVE);
+                utilities.setData(face, constants.DATA_ACTION, constants.ACTION_ALL);
             }
             if (!options.cropBoxResizable) {
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-line`), a.CLASS_HIDDEN);
-                b.addClass(cropBox.getElementsByClassName(`${ a.NAMESPACE }-point`), a.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-line`), constants.CLASS_HIDDEN);
+                utilities.addClass(cropBox.getElementsByClassName(`${ constants.NAMESPACE }-point`), constants.CLASS_HIDDEN);
             }
             this.render();
             this.ready = true;
@@ -244,10 +244,10 @@ define([
                 this.crop();
             }
             this.undefined(options.data);
-            if (b.isFunction(options.ready)) {
-                b.addListener(element, a.EVENT_READY, options.ready, { once: true });
+            if (utilities.isFunction(options.ready)) {
+                utilities.addListener(element, constants.EVENT_READY, options.ready, { once: true });
             }
-            b.dispatchEvent(element, a.EVENT_READY);
+            utilities.dispatchEvent(element, constants.EVENT_READY);
         }
         unbuild() {
             if (!this.ready) {
@@ -257,7 +257,7 @@ define([
             this.unbind();
             this.resetPreview();
             this.cropper.parentNode.removeChild(this.cropper);
-            b.removeClass(this.element, a.CLASS_HIDDEN);
+            utilities.removeClass(this.element, constants.CLASS_HIDDEN);
         }
         uncreate() {
             if (this.ready) {
@@ -280,9 +280,9 @@ define([
             return Cropper;
         }
         static setDefaults(options) {
-            b.assign(DEFAULTS, b.isPlainObject(options) && options);
+            utilities.assign(DEFAULTS, utilities.isPlainObject(options) && options);
         }
     }
-    b.assign(Cropper.prototype, render, preview, events, handlers, change, methods);
+    utilities.assign(Cropper.prototype, render, preview, events, handlers, change, methods);
     return skylark.attach('intg.Cropper', Cropper);
 });

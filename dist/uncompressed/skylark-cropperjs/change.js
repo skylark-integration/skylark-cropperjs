@@ -1,7 +1,7 @@
 define([
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         change(event) {
@@ -32,22 +32,22 @@ define([
             };
             const check = side => {
                 switch (side) {
-                case a.ACTION_EAST:
+                case constants.ACTION_EAST:
                     if (right + range.x > maxWidth) {
                         range.x = maxWidth - right;
                     }
                     break;
-                case a.ACTION_WEST:
+                case constants.ACTION_WEST:
                     if (left + range.x < minLeft) {
                         range.x = minLeft - left;
                     }
                     break;
-                case a.ACTION_NORTH:
+                case constants.ACTION_NORTH:
                     if (top + range.y < minTop) {
                         range.y = minTop - top;
                     }
                     break;
-                case a.ACTION_SOUTH:
+                case constants.ACTION_SOUTH:
                     if (bottom + range.y > maxHeight) {
                         range.y = maxHeight - bottom;
                     }
@@ -56,19 +56,19 @@ define([
                 }
             };
             switch (action) {
-            case a.ACTION_ALL:
+            case constants.ACTION_ALL:
                 left += range.x;
                 top += range.y;
                 break;
-            case a.ACTION_EAST:
+            case constants.ACTION_EAST:
                 if (range.x >= 0 && (right >= maxWidth || aspectRatio && (top <= minTop || bottom >= maxHeight))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_EAST);
+                check(constants.ACTION_EAST);
                 width += range.x;
                 if (width < 0) {
-                    action = a.ACTION_WEST;
+                    action = constants.ACTION_WEST;
                     width = -width;
                     left -= width;
                 }
@@ -77,16 +77,16 @@ define([
                     top += (cropBoxData.height - height) / 2;
                 }
                 break;
-            case a.ACTION_NORTH:
+            case constants.ACTION_NORTH:
                 if (range.y <= 0 && (top <= minTop || aspectRatio && (left <= minLeft || right >= maxWidth))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_NORTH);
+                check(constants.ACTION_NORTH);
                 height -= range.y;
                 top += range.y;
                 if (height < 0) {
-                    action = a.ACTION_SOUTH;
+                    action = constants.ACTION_SOUTH;
                     height = -height;
                     top -= height;
                 }
@@ -95,16 +95,16 @@ define([
                     left += (cropBoxData.width - width) / 2;
                 }
                 break;
-            case a.ACTION_WEST:
+            case constants.ACTION_WEST:
                 if (range.x <= 0 && (left <= minLeft || aspectRatio && (top <= minTop || bottom >= maxHeight))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_WEST);
+                check(constants.ACTION_WEST);
                 width -= range.x;
                 left += range.x;
                 if (width < 0) {
-                    action = a.ACTION_EAST;
+                    action = constants.ACTION_EAST;
                     width = -width;
                     left -= width;
                 }
@@ -113,15 +113,15 @@ define([
                     top += (cropBoxData.height - height) / 2;
                 }
                 break;
-            case a.ACTION_SOUTH:
+            case constants.ACTION_SOUTH:
                 if (range.y >= 0 && (bottom >= maxHeight || aspectRatio && (left <= minLeft || right >= maxWidth))) {
                     renderable = false;
                     break;
                 }
-                check(a.ACTION_SOUTH);
+                check(constants.ACTION_SOUTH);
                 height += range.y;
                 if (height < 0) {
-                    action = a.ACTION_NORTH;
+                    action = constants.ACTION_NORTH;
                     height = -height;
                     top -= height;
                 }
@@ -130,19 +130,19 @@ define([
                     left += (cropBoxData.width - width) / 2;
                 }
                 break;
-            case a.ACTION_NORTH_EAST:
+            case constants.ACTION_NORTH_EAST:
                 if (aspectRatio) {
                     if (range.y <= 0 && (top <= minTop || right >= maxWidth)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_NORTH);
+                    check(constants.ACTION_NORTH);
                     height -= range.y;
                     top += range.y;
                     width = height * aspectRatio;
                 } else {
-                    check(a.ACTION_NORTH);
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_NORTH);
+                    check(constants.ACTION_EAST);
                     if (range.x >= 0) {
                         if (right < maxWidth) {
                             width += range.x;
@@ -163,35 +163,35 @@ define([
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_NORTH_WEST:
+            case constants.ACTION_NORTH_WEST:
                 if (aspectRatio) {
                     if (range.y <= 0 && (top <= minTop || left <= minLeft)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_NORTH);
+                    check(constants.ACTION_NORTH);
                     height -= range.y;
                     top += range.y;
                     width = height * aspectRatio;
                     left += cropBoxData.width - width;
                 } else {
-                    check(a.ACTION_NORTH);
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_NORTH);
+                    check(constants.ACTION_WEST);
                     if (range.x <= 0) {
                         if (left > minLeft) {
                             width -= range.x;
@@ -214,34 +214,34 @@ define([
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_SOUTH_WEST:
+            case constants.ACTION_SOUTH_WEST:
                 if (aspectRatio) {
                     if (range.x <= 0 && (left <= minLeft || bottom >= maxHeight)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_WEST);
                     width -= range.x;
                     left += range.x;
                     height = width / aspectRatio;
                 } else {
-                    check(a.ACTION_SOUTH);
-                    check(a.ACTION_WEST);
+                    check(constants.ACTION_SOUTH);
+                    check(constants.ACTION_WEST);
                     if (range.x <= 0) {
                         if (left > minLeft) {
                             width -= range.x;
@@ -262,33 +262,33 @@ define([
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_SOUTH_EAST;
+                    action = constants.ACTION_SOUTH_EAST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_SOUTH_EAST:
+            case constants.ACTION_SOUTH_EAST:
                 if (aspectRatio) {
                     if (range.x >= 0 && (right >= maxWidth || bottom >= maxHeight)) {
                         renderable = false;
                         break;
                     }
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_EAST);
                     width += range.x;
                     height = width / aspectRatio;
                 } else {
-                    check(a.ACTION_SOUTH);
-                    check(a.ACTION_EAST);
+                    check(constants.ACTION_SOUTH);
+                    check(constants.ACTION_EAST);
                     if (range.x >= 0) {
                         if (right < maxWidth) {
                             width += range.x;
@@ -307,50 +307,50 @@ define([
                     }
                 }
                 if (width < 0 && height < 0) {
-                    action = a.ACTION_NORTH_WEST;
+                    action = constants.ACTION_NORTH_WEST;
                     height = -height;
                     width = -width;
                     top -= height;
                     left -= width;
                 } else if (width < 0) {
-                    action = a.ACTION_SOUTH_WEST;
+                    action = constants.ACTION_SOUTH_WEST;
                     width = -width;
                     left -= width;
                 } else if (height < 0) {
-                    action = a.ACTION_NORTH_EAST;
+                    action = constants.ACTION_NORTH_EAST;
                     height = -height;
                     top -= height;
                 }
                 break;
-            case a.ACTION_MOVE:
+            case constants.ACTION_MOVE:
                 this.move(range.x, range.y);
                 renderable = false;
                 break;
-            case a.ACTION_ZOOM:
-                this.zoom(b.getMaxZoomRatio(pointers), event);
+            case constants.ACTION_ZOOM:
+                this.zoom(utilities.getMaxZoomRatio(pointers), event);
                 renderable = false;
                 break;
-            case a.ACTION_CROP:
+            case constants.ACTION_CROP:
                 if (!range.x || !range.y) {
                     renderable = false;
                     break;
                 }
-                offset = b.getOffset(this.cropper);
+                offset = utilities.getOffset(this.cropper);
                 left = pointer.startX - offset.left;
                 top = pointer.startY - offset.top;
                 width = cropBoxData.minWidth;
                 height = cropBoxData.minHeight;
                 if (range.x > 0) {
-                    action = range.y > 0 ? a.ACTION_SOUTH_EAST : a.ACTION_NORTH_EAST;
+                    action = range.y > 0 ? constants.ACTION_SOUTH_EAST : constants.ACTION_NORTH_EAST;
                 } else if (range.x < 0) {
                     left -= width;
-                    action = range.y > 0 ? a.ACTION_SOUTH_WEST : a.ACTION_NORTH_WEST;
+                    action = range.y > 0 ? constants.ACTION_SOUTH_WEST : constants.ACTION_NORTH_WEST;
                 }
                 if (range.y < 0) {
                     top -= height;
                 }
                 if (!this.cropped) {
-                    b.removeClass(this.cropBox, a.CLASS_HIDDEN);
+                    utilities.removeClass(this.cropBox, constants.CLASS_HIDDEN);
                     this.cropped = true;
                     if (this.limited) {
                         this.limitCropBox(true, true);
@@ -367,7 +367,7 @@ define([
                 this.action = action;
                 this.renderCropBox();
             }
-            b.forEach(pointers, p => {
+            utilities.forEach(pointers, p => {
                 p.startX = p.endX;
                 p.startY = p.endY;
             });

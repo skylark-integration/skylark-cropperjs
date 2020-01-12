@@ -1,7 +1,7 @@
 define([
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         crop() {
@@ -9,18 +9,18 @@ define([
                 this.cropped = true;
                 this.limitCropBox(true, true);
                 if (this.options.modal) {
-                    b.addClass(this.dragBox, a.CLASS_MODAL);
+                    utilities.addClass(this.dragBox, constants.CLASS_MODAL);
                 }
-                b.removeClass(this.cropBox, a.CLASS_HIDDEN);
+                utilities.removeClass(this.cropBox, constants.CLASS_HIDDEN);
                 this.setCropBoxData(this.initialCropBoxData);
             }
             return this;
         },
         reset() {
             if (this.ready && !this.disabled) {
-                this.imageData = b.assign({}, this.initialImageData);
-                this.canvasData = b.assign({}, this.initialCanvasData);
-                this.cropBoxData = b.assign({}, this.initialCropBoxData);
+                this.imageData = utilities.assign({}, this.initialImageData);
+                this.canvasData = utilities.assign({}, this.initialCanvasData);
+                this.cropBoxData = utilities.assign({}, this.initialCropBoxData);
                 this.renderCanvas();
                 if (this.cropped) {
                     this.renderCropBox();
@@ -30,7 +30,7 @@ define([
         },
         clear() {
             if (this.cropped && !this.disabled) {
-                b.assign(this.cropBoxData, {
+                utilities.assign(this.cropBoxData, {
                     left: 0,
                     top: 0,
                     width: 0,
@@ -40,8 +40,8 @@ define([
                 this.renderCropBox();
                 this.limitCanvas(true, true);
                 this.renderCanvas();
-                b.removeClass(this.dragBox, a.CLASS_MODAL);
-                b.addClass(this.cropBox, a.CLASS_HIDDEN);
+                utilities.removeClass(this.dragBox, constants.CLASS_MODAL);
+                utilities.addClass(this.cropBox, constants.CLASS_HIDDEN);
             }
             return this;
         },
@@ -55,7 +55,7 @@ define([
                     this.image.src = url;
                     if (this.ready) {
                         this.viewBoxImage.src = url;
-                        b.forEach(this.previews, element => {
+                        utilities.forEach(this.previews, element => {
                             element.getElementsByTagName('img')[0].src = url;
                         });
                     }
@@ -73,23 +73,23 @@ define([
         enable() {
             if (this.ready && this.disabled) {
                 this.disabled = false;
-                b.removeClass(this.cropper, a.CLASS_DISABLED);
+                utilities.removeClass(this.cropper, constants.CLASS_DISABLED);
             }
             return this;
         },
         disable() {
             if (this.ready && !this.disabled) {
                 this.disabled = true;
-                b.addClass(this.cropper, a.CLASS_DISABLED);
+                utilities.addClass(this.cropper, constants.CLASS_DISABLED);
             }
             return this;
         },
         destroy() {
             const {element} = this;
-            if (!element[a.NAMESPACE]) {
+            if (!element[constants.NAMESPACE]) {
                 return this;
             }
-            element[a.NAMESPACE] = undefined;
+            element[constants.NAMESPACE] = undefined;
             if (this.isImg && this.replaced) {
                 element.src = this.originalUrl;
             }
@@ -98,7 +98,7 @@ define([
         },
         move(offsetX, offsetY = offsetX) {
             const {left, top} = this.canvasData;
-            return this.moveTo(b.isUndefined(offsetX) ? offsetX : left + Number(offsetX), b.isUndefined(offsetY) ? offsetY : top + Number(offsetY));
+            return this.moveTo(utilities.isUndefined(offsetX) ? offsetX : left + Number(offsetX), utilities.isUndefined(offsetY) ? offsetY : top + Number(offsetY));
         },
         moveTo(x, y = x) {
             const {canvasData} = this;
@@ -106,11 +106,11 @@ define([
             x = Number(x);
             y = Number(y);
             if (this.ready && !this.disabled && this.options.movable) {
-                if (b.isNumber(x)) {
+                if (utilities.isNumber(x)) {
                     canvasData.left = x;
                     changed = true;
                 }
-                if (b.isNumber(y)) {
+                if (utilities.isNumber(y)) {
                     canvasData.top = y;
                     changed = true;
                 }
@@ -137,7 +137,7 @@ define([
             if (ratio >= 0 && this.ready && !this.disabled && options.zoomable) {
                 const newWidth = naturalWidth * ratio;
                 const newHeight = naturalHeight * ratio;
-                if (b.dispatchEvent(this.element, a.EVENT_ZOOM, {
+                if (utilities.dispatchEvent(this.element, constants.EVENT_ZOOM, {
                         ratio,
                         oldRatio: width / naturalWidth,
                         originalEvent: _originalEvent
@@ -146,14 +146,14 @@ define([
                 }
                 if (_originalEvent) {
                     const {pointers} = this;
-                    const offset = b.getOffset(this.cropper);
-                    const center = pointers && Object.keys(pointers).length ? b.getPointersCenter(pointers) : {
+                    const offset = utilities.getOffset(this.cropper);
+                    const center = pointers && Object.keys(pointers).length ? utilities.getPointersCenter(pointers) : {
                         pageX: _originalEvent.pageX,
                         pageY: _originalEvent.pageY
                     };
                     canvasData.left -= (newWidth - width) * ((center.pageX - offset.left - canvasData.left) / width);
                     canvasData.top -= (newHeight - height) * ((center.pageY - offset.top - canvasData.top) / height);
-                } else if (b.isPlainObject(pivot) && b.isNumber(pivot.x) && b.isNumber(pivot.y)) {
+                } else if (utilities.isPlainObject(pivot) && utilities.isNumber(pivot.x) && utilities.isNumber(pivot.y)) {
                     canvasData.left -= (newWidth - width) * ((pivot.x - canvasData.left) / width);
                     canvasData.top -= (newHeight - height) * ((pivot.y - canvasData.top) / height);
                 } else {
@@ -171,7 +171,7 @@ define([
         },
         rotateTo(degree) {
             degree = Number(degree);
-            if (b.isNumber(degree) && this.ready && !this.disabled && this.options.rotatable) {
+            if (utilities.isNumber(degree) && this.ready && !this.disabled && this.options.rotatable) {
                 this.imageData.rotate = degree % 360;
                 this.renderCanvas(true, true);
             }
@@ -179,11 +179,11 @@ define([
         },
         scaleX(scaleX) {
             const {scaleY} = this.imageData;
-            return this.scale(scaleX, b.isNumber(scaleY) ? scaleY : 1);
+            return this.scale(scaleX, utilities.isNumber(scaleY) ? scaleY : 1);
         },
         scaleY(scaleY) {
             const {scaleX} = this.imageData;
-            return this.scale(b.isNumber(scaleX) ? scaleX : 1, scaleY);
+            return this.scale(utilities.isNumber(scaleX) ? scaleX : 1, scaleY);
         },
         scale(scaleX, scaleY = scaleX) {
             const {imageData} = this;
@@ -191,11 +191,11 @@ define([
             scaleX = Number(scaleX);
             scaleY = Number(scaleY);
             if (this.ready && !this.disabled && this.options.scalable) {
-                if (b.isNumber(scaleX)) {
+                if (utilities.isNumber(scaleX)) {
                     imageData.scaleX = scaleX;
                     transformed = true;
                 }
-                if (b.isNumber(scaleY)) {
+                if (utilities.isNumber(scaleY)) {
                     imageData.scaleY = scaleY;
                     transformed = true;
                 }
@@ -216,7 +216,7 @@ define([
                     height: cropBoxData.height
                 };
                 const ratio = imageData.width / imageData.naturalWidth;
-                b.forEach(data, (n, i) => {
+                utilities.forEach(data, (n, i) => {
                     data[i] = n / ratio;
                 });
                 if (rounded) {
@@ -247,20 +247,20 @@ define([
         setData(data) {
             const {options, imageData, canvasData} = this;
             const cropBoxData = {};
-            if (this.ready && !this.disabled && b.isPlainObject(data)) {
+            if (this.ready && !this.disabled && utilities.isPlainObject(data)) {
                 let transformed = false;
                 if (options.rotatable) {
-                    if (b.isNumber(data.rotate) && data.rotate !== imageData.rotate) {
+                    if (utilities.isNumber(data.rotate) && data.rotate !== imageData.rotate) {
                         imageData.rotate = data.rotate;
                         transformed = true;
                     }
                 }
                 if (options.scalable) {
-                    if (b.isNumber(data.scaleX) && data.scaleX !== imageData.scaleX) {
+                    if (utilities.isNumber(data.scaleX) && data.scaleX !== imageData.scaleX) {
                         imageData.scaleX = data.scaleX;
                         transformed = true;
                     }
-                    if (b.isNumber(data.scaleY) && data.scaleY !== imageData.scaleY) {
+                    if (utilities.isNumber(data.scaleY) && data.scaleY !== imageData.scaleY) {
                         imageData.scaleY = data.scaleY;
                         transformed = true;
                     }
@@ -269,16 +269,16 @@ define([
                     this.renderCanvas(true, true);
                 }
                 const ratio = imageData.width / imageData.naturalWidth;
-                if (b.isNumber(data.x)) {
+                if (utilities.isNumber(data.x)) {
                     cropBoxData.left = data.x * ratio + canvasData.left;
                 }
-                if (b.isNumber(data.y)) {
+                if (utilities.isNumber(data.y)) {
                     cropBoxData.top = data.y * ratio + canvasData.top;
                 }
-                if (b.isNumber(data.width)) {
+                if (utilities.isNumber(data.width)) {
                     cropBoxData.width = data.width * ratio;
                 }
-                if (b.isNumber(data.height)) {
+                if (utilities.isNumber(data.height)) {
                     cropBoxData.height = data.height * ratio;
                 }
                 this.setCropBoxData(cropBoxData);
@@ -286,16 +286,16 @@ define([
             return this;
         },
         getContainerData() {
-            return this.ready ? b.assign({}, this.containerData) : {};
+            return this.ready ? utilities.assign({}, this.containerData) : {};
         },
         getImageData() {
-            return this.sized ? b.assign({}, this.imageData) : {};
+            return this.sized ? utilities.assign({}, this.imageData) : {};
         },
         getCanvasData() {
             const {canvasData} = this;
             const data = {};
             if (this.ready) {
-                b.forEach([
+                utilities.forEach([
                     'left',
                     'top',
                     'width',
@@ -311,17 +311,17 @@ define([
         setCanvasData(data) {
             const {canvasData} = this;
             const {aspectRatio} = canvasData;
-            if (this.ready && !this.disabled && b.isPlainObject(data)) {
-                if (b.isNumber(data.left)) {
+            if (this.ready && !this.disabled && utilities.isPlainObject(data)) {
+                if (utilities.isNumber(data.left)) {
                     canvasData.left = data.left;
                 }
-                if (b.isNumber(data.top)) {
+                if (utilities.isNumber(data.top)) {
                     canvasData.top = data.top;
                 }
-                if (b.isNumber(data.width)) {
+                if (utilities.isNumber(data.width)) {
                     canvasData.width = data.width;
                     canvasData.height = data.width / aspectRatio;
-                } else if (b.isNumber(data.height)) {
+                } else if (utilities.isNumber(data.height)) {
                     canvasData.height = data.height;
                     canvasData.width = data.height * aspectRatio;
                 }
@@ -347,18 +347,18 @@ define([
             const {aspectRatio} = this.options;
             let widthChanged;
             let heightChanged;
-            if (this.ready && this.cropped && !this.disabled && b.isPlainObject(data)) {
-                if (b.isNumber(data.left)) {
+            if (this.ready && this.cropped && !this.disabled && utilities.isPlainObject(data)) {
+                if (utilities.isNumber(data.left)) {
                     cropBoxData.left = data.left;
                 }
-                if (b.isNumber(data.top)) {
+                if (utilities.isNumber(data.top)) {
                     cropBoxData.top = data.top;
                 }
-                if (b.isNumber(data.width) && data.width !== cropBoxData.width) {
+                if (utilities.isNumber(data.width) && data.width !== cropBoxData.width) {
                     widthChanged = true;
                     cropBoxData.width = data.width;
                 }
-                if (b.isNumber(data.height) && data.height !== cropBoxData.height) {
+                if (utilities.isNumber(data.height) && data.height !== cropBoxData.height) {
                     heightChanged = true;
                     cropBoxData.height = data.height;
                 }
@@ -378,7 +378,7 @@ define([
                 return null;
             }
             const {canvasData} = this;
-            const source = b.getSourceCanvas(this.image, this.imageData, canvasData, options);
+            const source = utilities.getSourceCanvas(this.image, this.imageData, canvasData, options);
             if (!this.cropped) {
                 return source;
             }
@@ -396,17 +396,17 @@ define([
                 initialHeight *= ratio;
             }
             const aspectRatio = initialWidth / initialHeight;
-            const maxSizes = b.getAdjustedSizes({
+            const maxSizes = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.maxWidth || Infinity,
                 height: options.maxHeight || Infinity
             });
-            const minSizes = b.getAdjustedSizes({
+            const minSizes = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.minWidth || 0,
                 height: options.minHeight || 0
             }, 'cover');
-            let {width, height} = b.getAdjustedSizes({
+            let {width, height} = utilities.getAdjustedSizes({
                 aspectRatio,
                 width: options.width || (ratio !== 1 ? source.width : initialWidth),
                 height: options.height || (ratio !== 1 ? source.height : initialHeight)
@@ -415,8 +415,8 @@ define([
             height = Math.min(maxSizes.height, Math.max(minSizes.height, height));
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = b.normalizeDecimalNumber(width);
-            canvas.height = b.normalizeDecimalNumber(height);
+            canvas.width = utilities.normalizeDecimalNumber(width);
+            canvas.height = utilities.normalizeDecimalNumber(height);
             context.fillStyle = options.fillColor || 'transparent';
             context.fillRect(0, 0, width, height);
             const {imageSmoothingEnabled = true, imageSmoothingQuality} = options;
@@ -474,12 +474,12 @@ define([
                 const scale = width / initialWidth;
                 params.push(dstX * scale, dstY * scale, dstWidth * scale, dstHeight * scale);
             }
-            context.drawImage(source, ...params.map(param => Math.floor(b.normalizeDecimalNumber(param))));
+            context.drawImage(source, ...params.map(param => Math.floor(utilities.normalizeDecimalNumber(param))));
             return canvas;
         },
         setAspectRatio(aspectRatio) {
             const {options} = this;
-            if (!this.disabled && !b.isUndefined(aspectRatio)) {
+            if (!this.disabled && !utilities.isUndefined(aspectRatio)) {
                 options.aspectRatio = Math.max(0, aspectRatio) || NaN;
                 if (this.ready) {
                     this.initCropBox();
@@ -493,17 +493,17 @@ define([
         setDragMode(mode) {
             const {options, dragBox, face} = this;
             if (this.ready && !this.disabled) {
-                const croppable = mode === a.DRAG_MODE_CROP;
-                const movable = options.movable && mode === a.DRAG_MODE_MOVE;
-                mode = croppable || movable ? mode : a.DRAG_MODE_NONE;
+                const croppable = mode === constants.DRAG_MODE_CROP;
+                const movable = options.movable && mode === constants.DRAG_MODE_MOVE;
+                mode = croppable || movable ? mode : constants.DRAG_MODE_NONE;
                 options.dragMode = mode;
-                b.setData(dragBox, a.DATA_ACTION, mode);
-                b.toggleClass(dragBox, a.CLASS_CROP, croppable);
-                b.toggleClass(dragBox, a.CLASS_MOVE, movable);
+                utilities.setData(dragBox, constants.DATA_ACTION, mode);
+                utilities.toggleClass(dragBox, constants.CLASS_CROP, croppable);
+                utilities.toggleClass(dragBox, constants.CLASS_MOVE, movable);
                 if (!options.cropBoxMovable) {
-                    b.setData(face, a.DATA_ACTION, mode);
-                    b.toggleClass(face, a.CLASS_CROP, croppable);
-                    b.toggleClass(face, a.CLASS_MOVE, movable);
+                    utilities.setData(face, constants.DATA_ACTION, mode);
+                    utilities.toggleClass(face, constants.CLASS_CROP, croppable);
+                    utilities.toggleClass(face, constants.CLASS_MOVE, movable);
                 }
             }
             return this;

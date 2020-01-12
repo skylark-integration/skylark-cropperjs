@@ -1,73 +1,73 @@
 define([
     './constants',
     './utilities'
-], function (a, b) {
+], function (constants, utilities) {
     'use strict';
     return {
         bind() {
             const {element, options, cropper} = this;
-            if (b.isFunction(options.cropstart)) {
-                b.addListener(element, a.EVENT_CROP_START, options.cropstart);
+            if (utilities.isFunction(options.cropstart)) {
+                utilities.addListener(element, constants.EVENT_CROP_START, options.cropstart);
             }
-            if (b.isFunction(options.cropmove)) {
-                b.addListener(element, a.EVENT_CROP_MOVE, options.cropmove);
+            if (utilities.isFunction(options.cropmove)) {
+                utilities.addListener(element, constants.EVENT_CROP_MOVE, options.cropmove);
             }
-            if (b.isFunction(options.cropend)) {
-                b.addListener(element, a.EVENT_CROP_END, options.cropend);
+            if (utilities.isFunction(options.cropend)) {
+                utilities.addListener(element, constants.EVENT_CROP_END, options.cropend);
             }
-            if (b.isFunction(options.crop)) {
-                b.addListener(element, a.EVENT_CROP, options.crop);
+            if (utilities.isFunction(options.crop)) {
+                utilities.addListener(element, constants.EVENT_CROP, options.crop);
             }
-            if (b.isFunction(options.zoom)) {
-                b.addListener(element, a.EVENT_ZOOM, options.zoom);
+            if (utilities.isFunction(options.zoom)) {
+                utilities.addListener(element, constants.EVENT_ZOOM, options.zoom);
             }
-            b.addListener(cropper, a.EVENT_POINTER_DOWN, this.onCropStart = this.cropStart.bind(this));
+            utilities.addListener(cropper, constants.EVENT_POINTER_DOWN, this.onCropStart = this.cropStart.bind(this));
             if (options.zoomable && options.zoomOnWheel) {
-                b.addListener(cropper, a.EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
+                utilities.addListener(cropper, constants.EVENT_WHEEL, this.onWheel = this.wheel.bind(this), {
                     passive: false,
                     capture: true
                 });
             }
             if (options.toggleDragModeOnDblclick) {
-                b.addListener(cropper, a.EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
+                utilities.addListener(cropper, constants.EVENT_DBLCLICK, this.onDblclick = this.dblclick.bind(this));
             }
-            b.addListener(element.ownerDocument, a.EVENT_POINTER_MOVE, this.onCropMove = this.cropMove.bind(this));
-            b.addListener(element.ownerDocument, a.EVENT_POINTER_UP, this.onCropEnd = this.cropEnd.bind(this));
+            utilities.addListener(element.ownerDocument, constants.EVENT_POINTER_MOVE, this.onCropMove = this.cropMove.bind(this));
+            utilities.addListener(element.ownerDocument, constants.EVENT_POINTER_UP, this.onCropEnd = this.cropEnd.bind(this));
             if (options.responsive) {
-                b.addListener(window, a.EVENT_RESIZE, this.onResize = this.resize.bind(this));
+                utilities.addListener(window, constants.EVENT_RESIZE, this.onResize = this.resize.bind(this));
             }
         },
         unbind() {
             const {element, options, cropper} = this;
-            if (b.isFunction(options.cropstart)) {
-                b.removeListener(element, a.EVENT_CROP_START, options.cropstart);
+            if (utilities.isFunction(options.cropstart)) {
+                utilities.removeListener(element, constants.EVENT_CROP_START, options.cropstart);
             }
-            if (b.isFunction(options.cropmove)) {
-                b.removeListener(element, a.EVENT_CROP_MOVE, options.cropmove);
+            if (utilities.isFunction(options.cropmove)) {
+                utilities.removeListener(element, constants.EVENT_CROP_MOVE, options.cropmove);
             }
-            if (b.isFunction(options.cropend)) {
-                b.removeListener(element, a.EVENT_CROP_END, options.cropend);
+            if (utilities.isFunction(options.cropend)) {
+                utilities.removeListener(element, constants.EVENT_CROP_END, options.cropend);
             }
-            if (b.isFunction(options.crop)) {
-                b.removeListener(element, a.EVENT_CROP, options.crop);
+            if (utilities.isFunction(options.crop)) {
+                utilities.removeListener(element, constants.EVENT_CROP, options.crop);
             }
-            if (b.isFunction(options.zoom)) {
-                b.removeListener(element, a.EVENT_ZOOM, options.zoom);
+            if (utilities.isFunction(options.zoom)) {
+                utilities.removeListener(element, constants.EVENT_ZOOM, options.zoom);
             }
-            b.removeListener(cropper, a.EVENT_POINTER_DOWN, this.onCropStart);
+            utilities.removeListener(cropper, constants.EVENT_POINTER_DOWN, this.onCropStart);
             if (options.zoomable && options.zoomOnWheel) {
-                b.removeListener(cropper, a.EVENT_WHEEL, this.onWheel, {
+                utilities.removeListener(cropper, constants.EVENT_WHEEL, this.onWheel, {
                     passive: false,
                     capture: true
                 });
             }
             if (options.toggleDragModeOnDblclick) {
-                b.removeListener(cropper, a.EVENT_DBLCLICK, this.onDblclick);
+                utilities.removeListener(cropper, constants.EVENT_DBLCLICK, this.onDblclick);
             }
-            b.removeListener(element.ownerDocument, a.EVENT_POINTER_MOVE, this.onCropMove);
-            b.removeListener(element.ownerDocument, a.EVENT_POINTER_UP, this.onCropEnd);
+            utilities.removeListener(element.ownerDocument, constants.EVENT_POINTER_MOVE, this.onCropMove);
+            utilities.removeListener(element.ownerDocument, constants.EVENT_POINTER_UP, this.onCropEnd);
             if (options.responsive) {
-                b.removeListener(window, a.EVENT_RESIZE, this.onResize);
+                utilities.removeListener(window, constants.EVENT_RESIZE, this.onResize);
             }
         }
     };
