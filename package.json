@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "skylark-langx": "git+https://github.com/skylarklangx/skylark-langx.git"
+    "skylark-langx-ns": "git+https://github.com/skylark-langx/skylark-langx-ns.git"
   },
   "skylarkjs": {
     "build": {

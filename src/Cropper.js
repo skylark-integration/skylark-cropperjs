@@ -1,5 +1,5 @@
 define([
-	'skylark-langx/skylark',
+	'skylark-langx-ns',
     './defaults',
     './template',
     './render',
