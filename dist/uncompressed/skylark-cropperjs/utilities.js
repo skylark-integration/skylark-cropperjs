@@ -743,9 +743,8 @@ function getSourceCanvas(image, _ref6, _ref7, _ref8) {
   context.scale(scaleX, scaleY);
   context.imageSmoothingEnabled = imageSmoothingEnabled;
   context.imageSmoothingQuality = imageSmoothingQuality;
-  context.drawImage.apply(context, [image].concat(_toConsumableArray(params.map(function (param) {
-    return Math.floor(normalizeDecimalNumber(param));
-  }))));
+  context.drawImage(image, ...params.map((param) => Math.floor(normalizeDecimalNumber(param))));
+
   context.restore();
   return canvas;
 }

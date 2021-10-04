@@ -243,7 +243,7 @@ define([
             if (options.autoCrop) {
                 this.crop();
             }
-            this.undefined(options.data);
+            this.setData(options.data);
             if (utilities.isFunction(options.ready)) {
                 utilities.addListener(element, constants.EVENT_READY, options.ready, { once: true });
             }
