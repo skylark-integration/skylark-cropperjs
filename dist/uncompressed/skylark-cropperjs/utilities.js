@@ -42,7 +42,7 @@ function isUndefined(value) {
  */
 
 function isObject(value) {
-  return _typeof(value) === 'object' && value !== null;
+  return typeof(value) === 'object' && value !== null;
 }
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 /**

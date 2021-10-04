@@ -75,7 +75,7 @@
   factory(define,require);
 
   if (!isAmd) {
-    var skylarkjs = require("skylark-langx/skylark");
+    var skylarkjs = require("skylark-langx-ns");
 
     if (isCmd) {
       module.exports = skylarkjs;
@@ -285,7 +285,7 @@ function isUndefined(value) {
  */
 
 function isObject(value) {
-  return _typeof(value) === 'object' && value !== null;
+  return typeof(value) === 'object' && value !== null;
 }
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 /**
@@ -2775,7 +2775,7 @@ define('skylark-cropperjs/methods',[
     };
 });
 define('skylark-cropperjs/Cropper',[
-    'skylark-langx/skylark',
+    'skylark-langx-ns',
     './defaults',
     './template',
     './render',
