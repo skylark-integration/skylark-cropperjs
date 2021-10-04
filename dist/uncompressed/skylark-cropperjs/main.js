@@ -1,5 +1,5 @@
 define([
-	"./Cropper"
+	"./cropper"
 ],function(Cropper){
 	return Cropper;
 })

@@ -5,5 +5,5 @@
  * @link https://github.com/skylark-integration/skylark-cropperjs/
  * @license MIT
  */
-define(["./Cropper"],function(e){return e});
+define(["./cropper"],function(e){return e});
 //# sourceMappingURL=sourcemaps/main.js.map

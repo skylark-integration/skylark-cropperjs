@@ -572,10 +572,12 @@ function getPointer(_ref2, endOnly) {
     endX: pageX,
     endY: pageY
   };
-  return endOnly ? end : _objectSpread2({
+  
+  return endOnly ? end : ({
     startX: pageX,
-    startY: pageY
-  }, end);
+    startY: pageY,
+    ...end,
+  });
 }
 /**
  * Get the center point coordinate of a group of pointers.

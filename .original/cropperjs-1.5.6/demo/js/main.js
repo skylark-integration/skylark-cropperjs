@@ -1,34 +1,7 @@
-requirejs.config({
-  baseUrl : "./",
-    paths: {
-    },
-      packages: [
-         {
-           name : "skylark-langx-ns",
-           location : "../node_modules/skylark-langx-ns/dist/uncompressed/skylark-langx-ns",
-            main: 'main'
-         },
-       
-          {
-            name: 'skylark-cropperjs',
-            location : "../src",
-            main: 'main'
-          }                   
-      ]
-
-});
- 
-
-require(["skylark-cropperjs"], function (Cropper) {
-    if (window.initPage) {
-        window.initPage(Cropper);
-    }
-});
-
-
-function initPage(Cropper) {
+window.onload = function () {
   'use strict';
 
+  var Cropper = window.Cropper;
   var URL = window.URL || window.webkitURL;
   var container = document.querySelector('.img-container');
   var image = container.getElementsByTagName('img').item(0);

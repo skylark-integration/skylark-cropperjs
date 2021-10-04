@@ -815,10 +815,12 @@ function getPointer(_ref2, endOnly) {
     endX: pageX,
     endY: pageY
   };
-  return endOnly ? end : _objectSpread2({
+  
+  return endOnly ? end : ({
     startX: pageX,
-    startY: pageY
-  }, end);
+    startY: pageY,
+    ...end,
+  });
 }
 /**
  * Get the center point coordinate of a group of pointers.
@@ -2773,7 +2775,7 @@ define('skylark-cropperjs/methods',[
         }
     };
 });
-define('skylark-cropperjs/Cropper',[
+define('skylark-cropperjs/cropper',[
     'skylark-langx-ns',
     './defaults',
     './template',
@@ -3062,7 +3064,7 @@ define('skylark-cropperjs/Cropper',[
     return skylark.attach('intg.Cropper', Cropper);
 });
 define('skylark-cropperjs/main',[
-	"./Cropper"
+	"./cropper"
 ],function(Cropper){
 	return Cropper;
 });
